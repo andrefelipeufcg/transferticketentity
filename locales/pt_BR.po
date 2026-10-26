@@ -206,8 +206,8 @@ msgid "Default assigned group"
 msgstr "Grupo atribuído padrão"
 
 #: templates/settings_groups.html.twig
-msgid "This is the group selected in the Entities tab. To change it, update the configuration in the Entities tab."
-msgstr "Este é o grupo escolhido na aba Entidades. Para alterá-lo, mude a configuração na aba Entidades."
+msgid "This is the group selected in the Entities tab. To change it, update the configuration in the Entities tab and save it."
+msgstr "Este é o grupo escolhido na aba Entidades. Para alterá-lo, mude a configuração na aba Entidades e salve."
 
 #: templates/settings_groups.html.twig
 msgid "No assigned group is configured. Configure it in the Entities tab before saving group memberships."

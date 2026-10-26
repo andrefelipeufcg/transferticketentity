@@ -60,7 +60,7 @@ function tteSaveEntitySettings(): void
 {
     global $DB, $transactionStarted;
 
-    $entityIds = tteValidatedIds($_POST['entities_id'] ?? [], __('Select at least one entity.', 'transferticketentity'), 0);
+    $entityIds = tteValidatedIds($_POST['entities_id'] ?? [], '', 0, true);
     $allowTransfer = tteReadBoolean('allow_transfer');
     $groupRequired = $allowTransfer && tteReadBoolean('allow_entity_only_transfer');
     $justification = $allowTransfer && tteReadBoolean('justification_transfer');
@@ -122,6 +122,22 @@ function tteSaveEntitySettings(): void
             ['entities_id' => $entityId]
         );
     }
+    // Disable transfer for unchecked entities that have existing settings
+    $uncheckedEntities = array_diff(array_keys($entityNames), $entityIds);
+    if ($uncheckedEntities !== []) {
+        $DB->update(
+            'glpi_plugin_transferticketentity_entities_settings',
+            [
+                'allow_transfer' => 0,
+                'allow_entity_only_transfer' => 0,
+                'justification_transfer' => 0,
+                'keep_category' => 0,
+                'itilcategories_id' => null,
+                'groups_id' => 0,
+            ],
+            ['entities_id' => $uncheckedEntities]
+        );
+    }
     if ($groupsId > 0) {
         Config::setConfigurationValues('transferticketentity', [
             'assigned_group_id' => $groupsId,
@@ -165,7 +181,7 @@ function tteSaveProfileSettings(): void
 {
     global $DB, $transactionStarted;
 
-    $profileIds = tteValidatedIds($_POST['profiles_id'] ?? [], __('Select at least one profile.', 'transferticketentity'));
+    $profileIds = tteValidatedIds($_POST['profiles_id'] ?? [], '', 1, true);
     $rights = [];
     foreach (TransferProfile::getAllRights() as $right) {
         $rights[$right['field']] = tteReadBoolean($right['field'])
@@ -173,16 +189,18 @@ function tteSaveProfileSettings(): void
             : 0;
     }
 
-    $existingProfiles = [];
-    foreach ($DB->request([
-        'SELECT' => ['id'],
-        'FROM' => 'glpi_profiles',
-        'WHERE' => ['id' => $profileIds],
-    ]) as $profile) {
-        $existingProfiles[(int) $profile['id']] = true;
-    }
-    if (count($existingProfiles) !== count($profileIds)) {
-        throw new InvalidArgumentException(__('One or more selected profiles do not exist.', 'transferticketentity'));
+    if ($profileIds !== []) {
+        $existingProfiles = [];
+        foreach ($DB->request([
+            'SELECT' => ['id'],
+            'FROM' => 'glpi_profiles',
+            'WHERE' => ['id' => $profileIds],
+        ]) as $profile) {
+            $existingProfiles[(int) $profile['id']] = true;
+        }
+        if (count($existingProfiles) !== count($profileIds)) {
+            throw new InvalidArgumentException(__('One or more selected profiles do not exist.', 'transferticketentity'));
+        }
     }
 
     $DB->beginTransaction();
@@ -194,6 +212,18 @@ function tteSaveProfileSettings(): void
             if ((int) ($storedRights[$name] ?? -1) !== (int) $value) {
                 throw new RuntimeException(__('Profile permissions could not be saved.', 'transferticketentity'));
             }
+        }
+    }
+    // Disable permissions for unchecked profiles
+    $allProfileIds = array_keys(Settings::getProfileNames());
+    $uncheckedProfileIds = array_diff($allProfileIds, $profileIds);
+    if ($uncheckedProfileIds !== []) {
+        $disabledRights = [];
+        foreach (TransferProfile::getAllRights() as $right) {
+            $disabledRights[$right['field']] = 0;
+        }
+        foreach ($uncheckedProfileIds as $pid) {
+            ProfileRight::updateProfileRights($pid, $disabledRights);
         }
     }
     Settings::rememberApplied('profiles', [
@@ -272,9 +302,12 @@ function tteSaveGroupMemberships(): void
     $transactionStarted = false;
 }
 
-function tteValidatedIds($input, string $emptyMessage, int $minimum = 1): array
+function tteValidatedIds($input, string $emptyMessage, int $minimum = 1, bool $allowEmpty = false): array
 {
     if (!is_array($input) || $input === []) {
+        if ($allowEmpty) {
+            return [];
+        }
         throw new InvalidArgumentException($emptyMessage);
     }
 

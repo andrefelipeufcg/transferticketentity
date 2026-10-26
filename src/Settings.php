@@ -131,8 +131,23 @@ class Settings extends CommonGLPI
      */
     public static function getLastApplied(string $kind): array
     {
-        $raw = Config::getConfigurationValue('transferticketentity', 'last_applied_' . $kind);
-        $data = is_string($raw) ? json_decode($raw, true) : null;
+        global $DB;
+
+        $row = $DB->request([
+            'SELECT' => ['value'],
+            'FROM'   => 'glpi_configs',
+            'WHERE'  => [
+                'context' => 'transferticketentity',
+                'name'    => 'last_applied_' . $kind,
+            ],
+            'LIMIT'  => 1,
+        ])->current();
+
+        if ($row === null) {
+            return [];
+        }
+
+        $data = json_decode($row['value'], true);
 
         return is_array($data) ? $data : [];
     }
@@ -142,9 +157,16 @@ class Settings extends CommonGLPI
      */
     public static function rememberApplied(string $kind, array $data): void
     {
-        Config::setConfigurationValues('transferticketentity', [
-            'last_applied_' . $kind => json_encode($data),
-        ]);
+        global $DB;
+
+        $name = 'last_applied_' . $kind;
+        $value = json_encode($data);
+
+        $DB->updateOrInsert(
+            'glpi_configs',
+            ['value' => $value],
+            ['context' => 'transferticketentity', 'name' => $name]
+        );
     }
 
     /**
@@ -169,7 +191,7 @@ class Settings extends CommonGLPI
     /**
      * @return array<int, string>
      */
-    private static function getProfileNames(): array
+    public static function getProfileNames(): array
     {
         global $DB;
 
