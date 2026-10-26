@@ -3,6 +3,7 @@
 namespace GlpiPlugin\Transferticketentity\Controller;
 
 use Entity as GlpiEntity;
+use Config;
 use Glpi\Controller\AbstractController;
 use Glpi\Http\RedirectResponse;
 use GlpiPlugin\Transferticketentity\Entity;
@@ -58,6 +59,11 @@ final class EntityController extends AbstractController
                 'entities_id' => $entity_id,
             ]
         );
+        if ($groups_id > 0) {
+            Config::setConfigurationValues('transferticketentity', [
+                'assigned_group_id' => $groups_id,
+            ]);
+        }
 
         Session::addMessageAfterRedirect(
             sprintf(

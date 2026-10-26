@@ -21,6 +21,7 @@ function plugin_init_transferticketentity()
     $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_UPDATE]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
 
     $PLUGIN_HOOKS['csrf_compliant']['transferticketentity'] = true;
+    $PLUGIN_HOOKS['config_page']['transferticketentity'] = 'front/config.form.php';
 }
 
 function plugin_version_transferticketentity()

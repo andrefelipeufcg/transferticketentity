@@ -180,3 +180,139 @@ msgstr "Nenhum grupo atribuído está configurado para esta entidade. Contate um
 #: hook.php
 msgid "Profile permissions successfully updated."
 msgstr "Permissões do perfil atualizadas com sucesso."
+
+#: templates/settings.html.twig
+msgid "Entities"
+msgstr "Entidades"
+
+#: templates/settings.html.twig
+msgid "Profiles"
+msgstr "Perfis"
+
+#: templates/settings.html.twig
+msgid "Groups"
+msgstr "Grupos"
+
+#: templates/settings_entities.html.twig
+msgid "Entities with this configuration"
+msgstr "Entidades com essa configuração"
+
+#: templates/settings_profiles.html.twig
+msgid "Profiles with this configuration"
+msgstr "Perfis com essa configuração"
+
+#: templates/settings_groups.html.twig
+msgid "Default assigned group"
+msgstr "Grupo atribuído padrão"
+
+#: templates/settings_groups.html.twig
+msgid "This is the group selected in the Entities tab. To change it, update the configuration in the Entities tab."
+msgstr "Este é o grupo escolhido na aba Entidades. Para alterá-lo, mude a configuração na aba Entidades."
+
+#: templates/settings_groups.html.twig
+msgid "No assigned group is configured. Configure it in the Entities tab before saving group memberships."
+msgstr "Nenhum grupo atribuído está configurado. Configure-o na aba Entidades antes de salvar os membros dos grupos."
+
+#: templates/settings_groups.html.twig
+msgid "Groups whose members will be added to the default assigned group"
+msgstr "Grupos cujos membros serão adicionados ao grupo atribuído padrão"
+
+#: templates/settings.html.twig
+msgid "Loading..."
+msgstr "Carregando..."
+
+#: public/js/pluginSettings.js
+msgid "Saving, this may take a while..."
+msgstr "Salvando, isso pode demorar um pouco..."
+
+#: public/js/pluginSettings.js
+msgid "The operation failed. Please try again."
+msgstr "A operação falhou. Tente novamente."
+
+#: front/config.ajax.php
+msgid "Invalid settings action."
+msgstr "Ação de configuração inválida."
+
+#: front/config.ajax.php
+msgid "Entity settings successfully updated."
+msgstr "Configurações das entidades atualizadas com sucesso."
+
+#: front/config.ajax.php
+msgid "Profile settings successfully updated."
+msgstr "Configurações dos perfis atualizadas com sucesso."
+
+#: front/config.ajax.php
+msgid "Group memberships successfully updated."
+msgstr "Membros dos grupos atualizados com sucesso."
+
+#: front/config.ajax.php
+msgid "Select at least one entity."
+msgstr "Selecione pelo menos uma entidade."
+
+#: front/config.ajax.php
+msgid "Select at least one profile."
+msgstr "Selecione pelo menos um perfil."
+
+#: front/config.ajax.php
+msgid "Select at least one source group."
+msgstr "Selecione pelo menos um grupo de origem."
+
+#: front/config.ajax.php
+msgid "Select an assigned group before saving."
+msgstr "Selecione um grupo atribuído antes de salvar."
+
+#: front/config.ajax.php
+msgid "The assigned group must be available in every selected entity. Unavailable in: %s"
+msgstr "O grupo atribuído deve estar disponível em todas as entidades selecionadas. Indisponível em: %s"
+
+#: front/config.ajax.php
+msgid "The default category must be available in every selected entity. Unavailable in: %s"
+msgstr "A categoria padrão deve estar disponível em todas as entidades selecionadas. Indisponível em: %s"
+
+#: front/config.ajax.php
+msgid "One or more selected entities do not exist."
+msgstr "Uma ou mais entidades selecionadas não existem."
+
+#: front/config.ajax.php
+msgid "One or more selected profiles do not exist."
+msgstr "Um ou mais perfis selecionados não existem."
+
+#: front/config.ajax.php
+msgid "One or more selected groups do not exist."
+msgstr "Um ou mais grupos selecionados não existem."
+
+#: front/config.ajax.php
+msgid "Choose the assigned group in the Entities tab before saving."
+msgstr "Escolha o grupo atribuído na aba Entidades antes de salvar."
+
+#: front/config.ajax.php
+msgid "The configured assigned group no longer exists. Update it in the Entities tab."
+msgstr "O grupo atribuído configurado não existe mais. Atualize-o na aba Entidades."
+
+#: front/config.ajax.php
+msgid "You do not have permission to update the configured assigned group."
+msgstr "Você não tem permissão para atualizar o grupo atribuído configurado."
+
+#: front/config.ajax.php
+msgid "A user could not be added to the configured assigned group."
+msgstr "Não foi possível adicionar um usuário ao grupo atribuído configurado."
+
+#: front/config.ajax.php
+msgid "Profile permissions could not be saved."
+msgstr "Não foi possível salvar as permissões dos perfis."
+
+#: front/config.ajax.php
+msgid "Invalid selection."
+msgstr "Seleção inválida."
+
+#: front/config.ajax.php
+msgid "The operation failed. No changes were applied."
+msgstr "A operação falhou. Nenhuma alteração foi aplicada."
+
+#: public/js/pluginSettings.js
+msgid "Check all"
+msgstr "Marcar todos"
+
+#: public/js/pluginSettings.js
+msgid "Uncheck all"
+msgstr "Desmarcar todos"

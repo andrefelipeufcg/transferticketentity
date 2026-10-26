@@ -34,9 +34,11 @@ use GlpiPlugin\Transferticketentity\Profile;
 function plugin_transferticketentity_profile_right_saved($item): void
 {
     static $messageAdded = false;
+    $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 
     if (
         $messageAdded
+        || str_ends_with((string) $requestPath, '/config.ajax.php')
         || !($item instanceof ProfileRight)
         || !in_array($item->fields['name'] ?? '', [
             'plugin_transferticketentity_use',
@@ -126,6 +128,12 @@ function plugin_transferticketentity_uninstall()
     ProfileRight::deleteProfileRights(array_map(fn($right) => $right['field'], Profile::getAllRights()));
 
     $DB->dropTable('glpi_plugin_transferticketentity_entities_settings', true);
+    Config::deleteConfigurationValues('transferticketentity', [
+        'assigned_group_id',
+        'last_applied_entities',
+        'last_applied_profiles',
+        'last_applied_groups',
+    ]);
 
     return true;
 }

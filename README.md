@@ -37,6 +37,14 @@ Pour configurer les prérequis du transfert d'entité :
 Vous pouvez configurer les droits d'accès au plugin dans l'administration des profils.
 Les prérequis du transfert se gèrent dans l'administration des entités.
 
+Les administrateurs ayant le droit de mise à jour de la configuration peuvent aussi utiliser l'icône de configuration du plugin. Elle contient trois onglets latéraux, plus l'onglet « Tous » qui les affiche ensemble :
+
+- **Entités** : applique les paramètres de transfert à plusieurs entités à la fois. Le groupe et la catégorie choisis doivent être accessibles dans toutes les entités sélectionnées.
+- **Profils** : applique les deux droits du plugin à plusieurs profils à la fois.
+- **Groupes** : ajoute les utilisateurs des groupes sélectionnés au groupe attribué configuré dans l'onglet Entités. Les utilisateurs déjà membres ne sont pas dupliqués et les appartenances existantes ne sont pas supprimées. Pour modifier le groupe attribué, utilisez l'onglet Entités.
+
+Le chargement des onglets et l'enregistrement affichent un indicateur de progression.
+
 ## Compatibilité
 
 Ce plugin a été testé jusqu'à la version de GLPI 10.0.14
@@ -79,6 +87,14 @@ To configure entity transfer prerequisites :
 
 You can configure access rights to the plugin in profile administration.
 The transfer prerequisites are managed in the entity administration.
+
+Administrators with configuration update rights can also use the plugin configuration icon. It contains three side tabs, plus an "All" tab that displays them together:
+
+- **Entities**: applies transfer settings to multiple entities at once. The selected group and category must be available in every selected entity.
+- **Profiles**: applies the plugin's two rights to multiple profiles at once.
+- **Groups**: adds users from the selected groups to the assigned group configured in the Entities tab. Existing memberships are not duplicated or removed. To change the assigned group, use the Entities tab.
+
+Loading tabs and saving display a progress indicator.
 
 ## Compatibility
 
