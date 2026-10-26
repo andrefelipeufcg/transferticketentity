@@ -3,6 +3,7 @@ function dropdownAllowTransferChange() {
     form.off('change')
     const dropdownAllowTransfer = $('select[name=allow_transfer]')
     const dropdownOnlyTransfer = $('select[name=allow_entity_only_transfer]');
+    const dropdownDefaultGroup = $('select[name=groups_id]');
     const dropdownJustificationTransfer = $('select[name=justification_transfer]');
     const dropdownKeepCategory = $('select[name=keep_category]');
     const dropdownITILCategoriesId = $('select[name=itilcategories_id]');
@@ -10,6 +11,9 @@ function dropdownAllowTransferChange() {
         dropdownOnlyTransfer.closest('.form-field').hide();
         dropdownOnlyTransfer.val('0');
         dropdownOnlyTransfer.trigger('change');
+        dropdownDefaultGroup.closest('.form-field').hide();
+        dropdownDefaultGroup.val('0');
+        dropdownDefaultGroup.trigger('change');
         dropdownJustificationTransfer.closest('.form-field').hide();
         dropdownJustificationTransfer.val('0');
         dropdownJustificationTransfer.trigger('change');
@@ -21,6 +25,13 @@ function dropdownAllowTransferChange() {
         dropdownITILCategoriesId.trigger('change');
     } else {
         dropdownOnlyTransfer.closest('.form-field').show();
+        if (dropdownOnlyTransfer.val() === '1') {
+            dropdownDefaultGroup.closest('.form-field').show();
+        } else {
+            dropdownDefaultGroup.closest('.form-field').hide();
+            dropdownDefaultGroup.val('0');
+            dropdownDefaultGroup.trigger('change');
+        }
         dropdownJustificationTransfer.closest('.form-field').show();
         dropdownKeepCategory.closest('.form-field').show();
         if (dropdownKeepCategory.val() === '0') {

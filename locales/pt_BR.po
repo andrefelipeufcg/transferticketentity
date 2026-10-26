@@ -152,3 +152,11 @@ msgstr "Manter a categoria após a transferência"
 #: templates/entity.html.twig
 msgid "Default category"
 msgstr "Categoria padrão"
+
+#: templates/entity.html.twig
+msgid "Default group"
+msgstr "Grupo padrão"
+
+#: templates/entity.html.twig
+msgid "If left empty, no group will be assigned in the new entity and the ticket will have no group."
+msgstr "Se ficar em branco, nenhum grupo será atribuído na nova entidade e o chamado ficará sem grupo."

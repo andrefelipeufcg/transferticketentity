@@ -20,6 +20,10 @@ function tteGetEntityGroups() {
                     $(groupChoice).append(new Option(group.name, group.id, false, false)).trigger('change');
                 });
                 groupChoiceFormField.show();
+                const defaultGroupId = String(parseInt(data.rights.groups_id, 10) || 0);
+                if (defaultGroupId !== '0' && groupChoice.find('option[value="' + defaultGroupId + '"]').length) {
+                    groupChoice.val(defaultGroupId).trigger('change');
+                }
                 if (data.rights.keep_category) {
                     $('#tte_adv-msg').show();
                 } else {
@@ -51,7 +55,7 @@ $(function() {
             return;
         }
 
-        if (entityRights.allow_entity_only_transfer && groupChoice.val() === '0') {
+        if (entityRights.allow_entity_only_transfer && parseInt(entityRights.groups_id, 10) > 0 && groupChoice.val() === '0') {
             glpi_toast_error(__("No group found with « Assigned to » right while a group is required. Transfer impossible.", "transferticketentity"));
             return;
         }

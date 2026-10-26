@@ -5,6 +5,7 @@ namespace GlpiPlugin\Transferticketentity\Controller;
 use Entity as GlpiEntity;
 use Glpi\Controller\AbstractController;
 use Glpi\Http\RedirectResponse;
+use GlpiPlugin\Transferticketentity\Entity;
 use Html;
 use Session;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +25,16 @@ final class EntityController extends AbstractController
 
         $itilcategories_id = $request->request->getInt('itilcategories_id');
 
+        // The default group only makes sense when a group is required, and must belong to the entity scope
+        $groups_id = $request->request->getInt('groups_id');
+        if (
+            !$request->request->getBoolean('allow_transfer')
+            || !$request->request->getBoolean('allow_entity_only_transfer')
+            || !in_array($groups_id, array_column(Entity::getEntityGroups($entity_id), 'id'))
+        ) {
+            $groups_id = 0;
+        }
+
         $DB->updateOrInsert(
             'glpi_plugin_transferticketentity_entities_settings',
             [
@@ -32,6 +43,7 @@ final class EntityController extends AbstractController
                 'allow_transfer' => $request->request->getBoolean('allow_transfer'),
                 'keep_category' => $request->request->getBoolean('keep_category'),
                 'itilcategories_id' => $itilcategories_id > 0 ? $itilcategories_id : null,
+                'groups_id' => $groups_id,
             ],
             [
                 'entities_id' => $entity_id,

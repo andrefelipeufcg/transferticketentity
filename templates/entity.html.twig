@@ -25,6 +25,16 @@
             'full_width': true
         }
         ) }}
+        {{ fields.dropdownArrayField('groups_id', checkRights['groups_id'], availableGroups, __('Default group', 'transferticketentity'),
+        {
+            'add_field_attribs': {
+                'style': 'display: none;'
+            },
+            'full_width': true,
+            'display_emptychoice': true,
+            'helper': __('If left empty, no group will be assigned in the new entity and the ticket will have no group.', 'transferticketentity'),
+        }
+        ) }}
         {{ fields.dropdownYesNo('justification_transfer', checkRights['justification_transfer'], __('Justification required', 'transferticketentity'),
         {
             'add_field_attribs': {
@@ -46,6 +56,7 @@
                 'add_field_attribs': {
                     'style': 'display: none;'
                 },
+                'full_width': true,
                 'display_emptychoice': true,
             }
         ) }}

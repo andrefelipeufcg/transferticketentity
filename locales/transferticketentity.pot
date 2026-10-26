@@ -177,6 +177,14 @@ msgstr ""
 msgid "Default category"
 msgstr ""
 
+#: templates/entity.html.twig
+msgid "Default group"
+msgstr ""
+
+#: templates/entity.html.twig
+msgid "If left empty, no group will be assigned in the new entity and the ticket will have no group."
+msgstr ""
+
 #: front/ticket.form.php:266
 msgid "Category will be set to null but its configured as mandatory in GLPIs template, please contact your administrator."
 msgstr ""

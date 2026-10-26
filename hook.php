@@ -53,6 +53,7 @@ function plugin_transferticketentity_install()
             `allow_transfer` BOOLEAN NOT NULL DEFAULT 0,
             `keep_category` BOOLEAN NOT NULL DEFAULT 0,
             `itilcategories_id` INT {$default_key_sign},
+            `groups_id` INT {$default_key_sign} NOT NULL DEFAULT 0,
             PRIMARY KEY  (`id`),
             KEY `entities_id` (`entities_id`),
             KEY `itilcategories_id` (`itilcategories_id`)
@@ -62,6 +63,14 @@ function plugin_transferticketentity_install()
     }
 
     $migration = new Migration(PLUGIN_TRANSFERTICKETENTITY_VERSION);
+
+    // Default group assigned to transferred tickets, 0 means no default group
+    $migration->addField(
+        'glpi_plugin_transferticketentity_entities_settings',
+        'groups_id',
+        'fkey',
+        ['after' => 'itilcategories_id']
+    );
 
     // GLPI does not use foreign keys, they were preventing entities and categories deletion
     $migration->dropForeignKeyContraint(
