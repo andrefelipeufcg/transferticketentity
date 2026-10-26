@@ -42,6 +42,16 @@ function dropdownAllowTransferChange() {
             dropdownITILCategoriesId.trigger('change');
         }
     }
+    form.off('submit').on('submit', function(event) {
+        if (
+            dropdownAllowTransfer.val() === '1'
+            && dropdownOnlyTransfer.val() === '1'
+            && !(parseInt(dropdownDefaultGroup.val(), 10) > 0)
+        ) {
+            event.preventDefault();
+            glpi_toast_error(__('Select a valid assigned group when group assignment is required.', 'transferticketentity'));
+        }
+    });
     form.on('change', function(event) {
         dropdownAllowTransferChange();
     })

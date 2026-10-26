@@ -17,6 +17,9 @@ function plugin_init_transferticketentity()
     Plugin::registerClass(TransferTicketEntityTicket::class, ['addtabon' => 'Ticket']);
     Plugin::registerClass(TransferTicketEntityEntity::class, ['addtabon' => 'Entity']);
 
+    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_ADD]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
+    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_UPDATE]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
+
     $PLUGIN_HOOKS['csrf_compliant']['transferticketentity'] = true;
 }
 

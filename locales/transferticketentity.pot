@@ -41,6 +41,10 @@ msgstr ""
 msgid "Item successfully updated"
 msgstr ""
 
+#: src/Controller/EntityController.php
+msgid "Item successfully updated: %s"
+msgstr ""
+
 #: inc/ticket.class.php:210
 msgid "Error, please reload the page."
 msgstr ""
@@ -90,7 +94,7 @@ msgid "Please select a valid group"
 msgstr ""
 
 #: front/ticket.form.php:181
-msgid "Escalation to"
+msgid "Transferred to entity"
 msgstr ""
 
 #: front/ticket.form.php:181
@@ -178,11 +182,27 @@ msgid "Default category"
 msgstr ""
 
 #: templates/entity.html.twig
-msgid "Default group"
+msgid "Assigned group"
 msgstr ""
 
 #: templates/entity.html.twig
-msgid "If left empty, no group will be assigned in the new entity and the ticket will have no group."
+msgid "If group assignment is not required, the ticket will be transferred without a group and all assigned groups will be removed."
+msgstr ""
+
+#: templates/entity.html.twig
+msgid "During transfer, the ticket will always be assigned to this group, and the user will not be able to change it."
+msgstr ""
+
+#: src/Controller/EntityController.php
+msgid "Select a valid assigned group when group assignment is required."
+msgstr ""
+
+#: src/Controller/TicketController.php
+msgid "No assigned group is configured for this entity. Contact an administrator."
+msgstr ""
+
+#: hook.php
+msgid "Profile permissions successfully updated."
 msgstr ""
 
 #: front/ticket.form.php:266

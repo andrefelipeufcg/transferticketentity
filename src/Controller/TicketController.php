@@ -103,16 +103,24 @@ final class TicketController extends AbstractController
         }
 
         $group = null;
-        $group_id = $request->request->getInt('group_choice');
+        $group_id = $entityRights['allow_entity_only_transfer']
+            ? (int) $entityRights['groups_id']
+            : 0;
+        $availableGroupIds = array_map('intval', array_column(self::getEntityGroups($entity_id), 'id'));
+
+        if ($entityRights['allow_entity_only_transfer'] && $group_id <= 0) {
+            return self::redirectWithError(__(
+                "No assigned group is configured for this entity. Contact an administrator.",
+                "transferticketentity"
+            ));
+        }
+
         if ($group_id > 0) {
-            if (!in_array($group_id, array_column(self::getEntityGroups($entity_id), 'id'))) {
+            if (!in_array($group_id, $availableGroupIds, true)) {
                 return self::redirectWithError(__("No group found with « Assigned to » right while a group is required. Transfer impossible.", "transferticketentity"));
             }
             $group = new Group();
             $group->getFromDB($group_id);
-        } elseif ($entityRights['allow_entity_only_transfer'] && (int) $entityRights['groups_id'] > 0) {
-            // A group is only required when the entity has a default group configured
-            return self::redirectWithError(__("No group found with « Assigned to » right while a group is required. Transfer impossible.", "transferticketentity"));
         }
 
         $justification = trim($request->request->getString('justification'));
@@ -174,7 +182,7 @@ final class TicketController extends AbstractController
         }
         $groupText = '';
         if ($group) {
-            $groupText = __(" in the group ", "transferticketentity") . htmlescape($group->getName());
+            $groupText = " " . __("in the group", "transferticketentity") . " " . htmlescape($group->getName());
         }
 
         // Log the transfer in a task
@@ -184,7 +192,7 @@ final class TicketController extends AbstractController
             'is_private' => true,
             'state'      => Planning::INFO,
             'content'    => __(
-                "Escalation to",
+                "Transferred to entity",
                 "transferticketentity"
             ) . " " . htmlescape($entity->getName()) . $groupText . $justificationText,
         ]);

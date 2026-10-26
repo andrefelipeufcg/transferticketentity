@@ -22,17 +22,18 @@
             'add_field_attribs': {
                 'style': 'display: none;'
             },
-            'full_width': true
+            'full_width': true,
+            'helper': __('If group assignment is not required, the ticket will be transferred without a group and all assigned groups will be removed.', 'transferticketentity'),
         }
         ) }}
-        {{ fields.dropdownArrayField('groups_id', checkRights['groups_id'], availableGroups, __('Default group', 'transferticketentity'),
+        {{ fields.dropdownArrayField('groups_id', checkRights['groups_id'], availableGroups, __('Assigned group', 'transferticketentity'),
         {
             'add_field_attribs': {
                 'style': 'display: none;'
             },
             'full_width': true,
             'display_emptychoice': true,
-            'helper': __('If left empty, no group will be assigned in the new entity and the ticket will have no group.', 'transferticketentity'),
+            'helper': __('During transfer, the ticket will always be assigned to this group, and the user will not be able to change it.', 'transferticketentity'),
         }
         ) }}
         {{ fields.dropdownYesNo('justification_transfer', checkRights['justification_transfer'], __('Justification required', 'transferticketentity'),

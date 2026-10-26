@@ -41,6 +41,10 @@ msgstr "Salvar"
 msgid "Item successfully updated"
 msgstr "Item atualizado com sucesso"
 
+#: src/Controller/EntityController.php
+msgid "Item successfully updated: %s"
+msgstr "Item atualizado com sucesso: %s"
+
 #: inc/ticket.class.php:210
 msgid "Error, please reload the page."
 msgstr "Erro, por favor atualizar a página."
@@ -90,8 +94,8 @@ msgid "Please select a valid group"
 msgstr "Por favor selecione um grupo válido"
 
 #: inc/ticket.php:181
-msgid "Escalation to"
-msgstr "Escalação para"
+msgid "Transferred to entity"
+msgstr "Transferido para a entidade"
 
 #: inc/ticket.php:181
 msgid "in the group"
@@ -154,9 +158,25 @@ msgid "Default category"
 msgstr "Categoria padrão"
 
 #: templates/entity.html.twig
-msgid "Default group"
-msgstr "Grupo padrão"
+msgid "Assigned group"
+msgstr "Grupo atribuído"
 
 #: templates/entity.html.twig
-msgid "If left empty, no group will be assigned in the new entity and the ticket will have no group."
-msgstr "Se ficar em branco, nenhum grupo será atribuído na nova entidade e o chamado ficará sem grupo."
+msgid "If group assignment is not required, the ticket will be transferred without a group and all assigned groups will be removed."
+msgstr "Se não exigir a atribuição a um grupo, o chamado será transferido sem grupo e todos os grupos atribuídos serão removidos."
+
+#: templates/entity.html.twig
+msgid "During transfer, the ticket will always be assigned to this group, and the user will not be able to change it."
+msgstr "Durante a transferência, o chamado será obrigatoriamente atribuído a este grupo, e o usuário não poderá alterá-lo."
+
+#: src/Controller/EntityController.php
+msgid "Select a valid assigned group when group assignment is required."
+msgstr "Selecione um grupo atribuído válido quando a atribuição a um grupo for exigida."
+
+#: src/Controller/TicketController.php
+msgid "No assigned group is configured for this entity. Contact an administrator."
+msgstr "Nenhum grupo atribuído está configurado para esta entidade. Contate um administrador."
+
+#: hook.php
+msgid "Profile permissions successfully updated."
+msgstr "Permissões do perfil atualizadas com sucesso."

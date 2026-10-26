@@ -31,6 +31,29 @@
 
 use GlpiPlugin\Transferticketentity\Profile;
 
+function plugin_transferticketentity_profile_right_saved($item): void
+{
+    static $messageAdded = false;
+
+    if (
+        $messageAdded
+        || !($item instanceof ProfileRight)
+        || !in_array($item->fields['name'] ?? '', [
+            'plugin_transferticketentity_use',
+            'plugin_transferticketentity_bypass',
+        ], true)
+    ) {
+        return;
+    }
+
+    $messageAdded = true;
+    Session::addMessageAfterRedirect(
+        __('Profile permissions successfully updated.', 'transferticketentity'),
+        true,
+        INFO
+    );
+}
+
 /**
  * Install hook
  *
