@@ -51,11 +51,10 @@ class Settings extends CommonGLPI
             return '';
         }
 
-        // The groups settings are retained for future use but hidden for now.
         return [
             1 => self::createTabEntry(__('Entities', 'transferticketentity'), 0, null, 'ti ti-building'),
             2 => self::createTabEntry(__('Profiles', 'transferticketentity'), 0, null, 'ti ti-shield-lock'),
-            // 3 => self::createTabEntry(__('Groups', 'transferticketentity'), 0, null, 'ti ti-users-group'),
+            3 => self::createTabEntry(__('Groups', 'transferticketentity'), 0, null, 'ti ti-users-group'),
         ];
     }
 

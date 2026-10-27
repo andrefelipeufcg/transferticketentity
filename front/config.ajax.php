@@ -242,7 +242,13 @@ function tteSaveGroupMemberships(): void
     if ($targetGroupId <= 0) {
         throw new InvalidArgumentException(__('Choose the assigned group in the Entities tab before saving.', 'transferticketentity'));
     }
-    $groupIds = tteValidatedIds($_POST['groups_id'] ?? [], __('Select at least one source group.', 'transferticketentity'));
+    $groupIds = tteValidatedIds(
+        $_POST['groups_id'] ?? [],
+        __('Select at least one source group.', 'transferticketentity')
+    );
+    if (in_array($targetGroupId, $groupIds, true)) {
+        throw new InvalidArgumentException(__('The default assigned group cannot be selected as a source group.', 'transferticketentity'));
+    }
 
     $targetGroup = new Group();
     if (!$targetGroup->getFromDB($targetGroupId)) {
@@ -264,13 +270,35 @@ function tteSaveGroupMemberships(): void
         throw new InvalidArgumentException(__('One or more selected groups do not exist.', 'transferticketentity'));
     }
 
-    $members = [];
+    $selectedMembers = [];
+    if ($groupIds !== []) {
+        foreach ($DB->request([
+            'SELECT' => ['users_id'],
+            'FROM' => 'glpi_groups_users',
+            'WHERE' => ['groups_id' => $groupIds],
+        ]) as $member) {
+            $selectedMembers[(int) $member['users_id']] = true;
+        }
+    }
+
+    $allGroupIds = [];
     foreach ($DB->request([
-        'SELECT' => ['users_id'],
-        'FROM' => 'glpi_groups_users',
-        'WHERE' => ['groups_id' => $groupIds],
-    ]) as $member) {
-        $members[(int) $member['users_id']] = true;
+        'SELECT' => ['id'],
+        'FROM' => 'glpi_groups',
+        'WHERE' => ['id' => ['>', 0]],
+    ]) as $group) {
+        $allGroupIds[] = (int) $group['id'];
+    }
+    $deselectedGroupIds = array_values(array_diff($allGroupIds, $groupIds, [$targetGroupId]));
+    $deselectedMembers = [];
+    if ($deselectedGroupIds !== []) {
+        foreach ($DB->request([
+            'SELECT' => ['users_id'],
+            'FROM' => 'glpi_groups_users',
+            'WHERE' => ['groups_id' => $deselectedGroupIds],
+        ]) as $member) {
+            $deselectedMembers[(int) $member['users_id']] = true;
+        }
     }
 
     $existingMembers = [];
@@ -285,15 +313,20 @@ function tteSaveGroupMemberships(): void
     $DB->beginTransaction();
     $transactionStarted = true;
     $groupUser = new Group_User();
-    foreach (array_keys($members) as $userId) {
+    foreach (array_keys($deselectedMembers) as $userId) {
+        // A selected source group always wins over a deselected one.
+        if (isset($selectedMembers[$userId]) || !isset($existingMembers[$userId])) {
+            continue;
+        }
+        if (!$groupUser->deleteByCriteria(['groups_id' => $targetGroupId, 'users_id' => $userId], true)) {
+            throw new RuntimeException(__('A user could not be removed from the configured assigned group.', 'transferticketentity'));
+        }
+    }
+    foreach (array_keys($selectedMembers) as $userId) {
         if (isset($existingMembers[$userId])) {
             continue;
         }
-
-        if (!$groupUser->add([
-            'groups_id' => $targetGroupId,
-            'users_id' => $userId,
-        ])) {
+        if (!$groupUser->add(['groups_id' => $targetGroupId, 'users_id' => $userId])) {
             throw new RuntimeException(__('A user could not be added to the configured assigned group.', 'transferticketentity'));
         }
     }

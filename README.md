@@ -1,3 +1,50 @@
+# Plugin GLPI Transfer Ticket Entity (PT-BR)
+
+## Introdução
+
+Este plugin permite que perfis autorizados transfiram chamados de uma entidade para outra, mesmo quando não possuem acesso à entidade de destino. Ele foi desenvolvido para organizações que configuram seus perímetros de atuação no GLPI por entidade, como Recursos Humanos, Contabilidade e Tecnologia da Informação.
+
+O objetivo é permitir a transferência de chamados entre técnicos do GLPI de entidades diferentes, preservando a confidencialidade das informações entre as entidades.
+
+Por exemplo, um perfil de técnico da Contabilidade pode visualizar, por padrão, apenas os chamados da entidade Contabilidade. Se um chamado atribuído a ele estiver relacionado ao departamento de Recursos Humanos, ele poderá transferi-lo com acompanhamento. Após a transferência, o técnico não terá mais visibilidade sobre o chamado.
+
+## Documentação
+
+Para configurar os pré-requisitos da transferência entre entidades:
+
+- Acesse **Administração > Perfis > Seu perfil > Assistência > Chamado** e marque a permissão **Atualizar**.
+- **Permitir transferência de chamados**: define se a transferência é permitida para a entidade e os grupos associados.
+- **Exigir atribuição a um grupo**:
+  - Define se o chamado transferido deve ser obrigatoriamente atribuído a um grupo.
+  - Quando desativado, a opção "Nenhum" ficará disponível na lista de grupos de destino.
+  - Se o chamado for enviado para uma entidade sem grupo, ele será considerado "Novo".
+- **Exigir justificativa para transferência**:
+  - Quando ativado, o campo de justificativa será exibido com destaque vermelho.
+  - Quando desativado, o campo será exibido com destaque azul, mas continuará disponível para preenchimento.
+- **Manter categoria após a transferência**:
+  - Quando ativado, a categoria será mantida somente se estiver disponível na entidade de destino; caso contrário, será removida.
+  - Quando desativado, a categoria será removida.
+  - Também é possível selecionar uma categoria padrão.
+  - :warning: Se a categoria for obrigatória na entidade de destino, por meio dos modelos do GLPI, e for removida durante a transferência, será exibido um erro.
+
+## Onde configurar o plugin
+
+Os direitos de acesso ao plugin podem ser configurados em **Administração > Perfis**. Os pré-requisitos da transferência são administrados nas configurações das entidades.
+
+Administradores com permissão para atualizar a configuração também podem utilizar o ícone de configuração do plugin. A tela possui abas laterais para **Entidades**, **Perfis** e **Grupos**, além da aba **Todos**, que exibe as configurações em conjunto:
+
+- **Entidades**: aplica as configurações de transferência a várias entidades simultaneamente. O grupo e a categoria selecionados devem estar disponíveis em todas as entidades escolhidas.
+- **Perfis**: aplica os dois direitos do plugin a vários perfis simultaneamente.
+- **Grupos**: adiciona ao grupo atribuído padrão os usuários dos grupos selecionados. Usuários que já são membros não são duplicados. O grupo atribuído padrão é definido na aba Entidades.
+
+O carregamento das abas e o salvamento exibem um indicador de progresso.
+
+## Compatibilidade
+
+Este plugin foi desenvolvido e testado para uso com o GLPI 11.
+
+---
+
 # GLPi Transfer Ticket Entity Plugin (FR)
 
 ## Introduction
@@ -18,8 +65,8 @@ Pour configurer les prérequis du transfert d'entité :
 
 - Dans Administration > Profils > VotreProfil > Assistance > Ticket : Mettre à jour doit être coché.
 
-- Autoriser la fonction Transfert : définit si le transfert est autorisé vers l'entité et groupes associés
-- Groupe à assigner obligatoire pour effectuer un transfert : 
+- Autoriser la fonction Transfert : définit si le transfert est autorisé vers l'entité et les groupes associés.
+- Groupe à assigner obligatoire pour effectuer un transfert :
 	- Définit si le ticket transféré doit être obligatoirement assigné à un groupe.
 	- Si non, le choix "aucun" apparaîtra dans la liste du groupe cible et sera à sélectionner
 	- Si le ticket est envoyé dans une entité sans groupe, il sera considéré comme "nouveau"
@@ -41,13 +88,17 @@ Les administrateurs ayant le droit de mise à jour de la configuration peuvent a
 
 - **Entités** : applique les paramètres de transfert à plusieurs entités à la fois. Le groupe et la catégorie choisis doivent être accessibles dans toutes les entités sélectionnées.
 - **Profils** : applique les deux droits du plugin à plusieurs profils à la fois.
-- **Groupes** : ajoute les utilisateurs des groupes sélectionnés au groupe attribué configuré dans l'onglet Entités. Les utilisateurs déjà membres ne sont pas dupliqués et les appartenances existantes ne sont pas supprimées. Pour modifier le groupe attribué, utilisez l'onglet Entités.
+- **Groupes** : ajoute au groupe attribué par défaut les utilisateurs des groupes sélectionnés. Les utilisateurs déjà membres ne sont pas dupliqués. Les utilisateurs appartenant à des groupes désélectionnés sont retirés du groupe attribué, sauf s'ils appartiennent également à un groupe sélectionné. Le groupe attribué par défaut ne peut pas être sélectionné comme groupe source et est défini dans l'onglet Entités.
 
-Le chargement des onglets et l'enregistrement affichent un indicateur de progression.
+Les paramètres sont conservés et rechargés lors de la réouverture de la page de configuration. Les entités et profils désélectionnés sont automatiquement désactivés lors de l'enregistrement. Le chargement des onglets et l'enregistrement affichent un indicateur de progression.
+
+L'onglet « Groupes » peut être temporairement masqué dans l'interface tout en restant disponible dans le code pour une utilisation future.
 
 ## Compatibilité
 
-Ce plugin a été testé jusqu'à la version de GLPI 10.0.14
+Ce plugin a été développé et testé pour GLPI 11.
+
+La compatibilité avec GLPI 10.0.14, mentionnée dans la documentation d'origine, n'a pas été revalidée pour cette version personnalisée.
 
 # GLPi Transfer Ticket Entity Plugin (EN)
 
@@ -69,8 +120,8 @@ To configure entity transfer prerequisites :
 
 - In Administration > Profile > YourProfile > Assistance > Ticket : Update must be checked.
 
-- Allow transfer function : defines whether transfer is allowed to the entity and associated groups
-- Assigned group required to make a transfer : 
+- **Allow ticket transfers**: defines whether transfers are allowed to the entity and its associated groups.
+- **Require assignment to a group**:
     - Defines whether the transferred ticket must be assigned to a group.
     - If not, the choice "none" will appear in the target group list and must be selected.
     - If the ticket is sent to an entity without a group, it will be considered "new"
@@ -88,14 +139,16 @@ To configure entity transfer prerequisites :
 You can configure access rights to the plugin in profile administration.
 The transfer prerequisites are managed in the entity administration.
 
-Administrators with configuration update rights can also use the plugin configuration icon. It contains three side tabs, plus an "All" tab that displays them together:
+Administrators with permission to update the configuration can also use the plugin configuration icon. It contains side tabs for **Entities**, **Profiles**, and **Groups**, plus an **All** tab that displays them together:
 
 - **Entities**: applies transfer settings to multiple entities at once. The selected group and category must be available in every selected entity.
 - **Profiles**: applies the plugin's two rights to multiple profiles at once.
-- **Groups**: adds users from the selected groups to the assigned group configured in the Entities tab. Existing memberships are not duplicated or removed. To change the assigned group, use the Entities tab.
+- **Groups**: adds users from the selected groups to the default assigned group. Existing memberships are not duplicated. Users belonging to deselected groups are removed from the assigned group unless they also belong to a selected group. The default assigned group cannot be selected as a source group and is configured in the Entities tab.
 
-Loading tabs and saving display a progress indicator.
+Settings are persisted and restored when the configuration page is reopened. Deselected entities and profiles are automatically disabled when settings are saved. Loading tabs and saving display a progress indicator.
+
+The **Groups** tab may be temporarily hidden in the interface while remaining available in the source code for future use.
 
 ## Compatibility
 
-This plugin has been tested up to GLPI version 10.0.14
+This plugin was developed and tested for GLPI 11.
