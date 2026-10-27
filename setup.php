@@ -1,41 +1,12 @@
 <?php
 
-/**
- -------------------------------------------------------------------------
- LICENSE
-
- This file is part of Transferticketentity plugin for GLPI.
-
- Transferticketentity is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- Transferticketentity is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with Reports. If not, see <http://www.gnu.org/licenses/>.
-
- @category  Ticket
- @package   Transferticketentity
- @author    Yannick Comba <y.comba@maine-et-loire.fr>
- @copyright 2015-2023 Département de Maine et Loire plugin team
- @license   AGPL License 3.0 or (at your option) any later version
-            https://www.gnu.org/licenses/gpl-3.0.html
- @link      https://github.com/departement-maine-et-loire/
- --------------------------------------------------------------------------
-*/
-
 use GlpiPlugin\Transferticketentity\Entity as TransferTicketEntityEntity;
 use GlpiPlugin\Transferticketentity\Profile as TransferTicketEntityProfile;
 use GlpiPlugin\Transferticketentity\Ticket as TransferTicketEntityTicket;
 
-define('PLUGIN_TRANSFERTICKETENTITY_VERSION', '1.1.4');
+define('PLUGIN_TRANSFERTICKETENTITY_VERSION', '1.3.1');
 define('PLUGIN_TRANSFERTICKETENTITY_MIN_GLPI', '11.0.0');
-define('PLUGIN_TRANSFERTICKETENTITY_MAX_GLPI', '11.0.99');
+define('PLUGIN_TRANSFERTICKETENTITY_MAX_GLPI', '12.0.99');
 
 function plugin_init_transferticketentity()
 {
@@ -46,7 +17,11 @@ function plugin_init_transferticketentity()
     Plugin::registerClass(TransferTicketEntityTicket::class, ['addtabon' => 'Ticket']);
     Plugin::registerClass(TransferTicketEntityEntity::class, ['addtabon' => 'Entity']);
 
+    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_ADD]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
+    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_UPDATE]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
+
     $PLUGIN_HOOKS['csrf_compliant']['transferticketentity'] = true;
+    $PLUGIN_HOOKS['config_page']['transferticketentity'] = 'front/config.form.php';
 }
 
 function plugin_version_transferticketentity()

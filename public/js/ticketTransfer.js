@@ -1,6 +1,7 @@
 function tteGetEntityGroups() {
     const entityChoice = $('select[name=entity_choice]');
     const groupChoice = $('select[name=group_choice]');
+    const groupChoiceValue = $('input[type=hidden][name=group_choice]');
     $.ajax({
         url: CFG_GLPI.root_doc + '/plugins/transferticketentity/ajax/get_entities_rights.php',
         method: "GET",
@@ -15,11 +16,26 @@ function tteGetEntityGroups() {
             const groupChoiceFormField = groupChoice.closest('.form-field');
             if (entityChoice.val() === '-1') {
                 groupChoiceFormField.hide();
+                groupChoiceValue.val('0');
             } else {
                 data.groups.forEach((group) => {
                     $(groupChoice).append(new Option(group.name, group.id, false, false)).trigger('change');
                 });
-                groupChoiceFormField.show();
+                const groupRequired = parseInt(data.rights.allow_entity_only_transfer, 10) === 1;
+                const defaultGroupId = String(parseInt(data.rights.groups_id, 10) || 0);
+                if (groupRequired && defaultGroupId !== '0' && groupChoice.find('option[value="' + defaultGroupId + '"]').length) {
+                    groupChoice.val(defaultGroupId).trigger('change');
+                    groupChoiceValue.val(defaultGroupId);
+                    groupChoiceFormField.show();
+                } else if (groupRequired) {
+                    groupChoice.val('0').trigger('change');
+                    groupChoiceValue.val('0');
+                    groupChoiceFormField.show();
+                } else {
+                    groupChoice.val('0').trigger('change');
+                    groupChoiceValue.val('0');
+                    groupChoiceFormField.hide();
+                }
                 if (data.rights.keep_category) {
                     $('#tte_adv-msg').show();
                 } else {
@@ -46,15 +62,19 @@ $(function() {
         const entityRights = form.data('entity-right');
         const entityChoice = $('select[name=entity_choice]');
         const groupChoice = $('select[name=group_choice]');
+        const groupChoiceValue = $('input[type=hidden][name=group_choice]');
         if (entityChoice.val() === '-1') {
             glpi_toast_error(__('Mandatory fields are not filled. Please correct: %s').replace("%s", __('Entity')));
             return;
         }
 
-        if (entityRights.allow_entity_only_transfer && groupChoice.val() === '0') {
+        const groupRequired = parseInt(entityRights.allow_entity_only_transfer, 10) === 1;
+        const assignedGroupId = String(parseInt(entityRights.groups_id, 10) || 0);
+        if (groupRequired && (assignedGroupId === '0' || groupChoice.val() !== assignedGroupId)) {
             glpi_toast_error(__("No group found with « Assigned to » right while a group is required. Transfer impossible.", "transferticketentity"));
             return;
         }
+        groupChoiceValue.val(groupRequired ? assignedGroupId : '0');
 
         const modal = glpi_confirm({
             title: __("Confirm transfer ?", "transferticketentity"),

@@ -18,10 +18,15 @@
       <issues>https://github.com/departement-maine-et-loire/transferticketentity/issues</issues>
       <readme>https://raw.githubusercontent.com/departement-maine-et-loire/transferticketentity/master/README.md</readme>
       <authors>
+         <author>andrefelipeufcg</author>
          <author>D&#xE9;partement de Maine-et-Loire</author>
          <author>Yannick COMBA</author>
       </authors>
       <versions>
+         <version>
+            <num>1.3.1</num>
+            <compatibility>&gt;=11.0.0</compatibility>
+         </version>
          <version>
             <num>1.2.0</num>
             <compatibility>~11.0.0</compatibility>

@@ -41,6 +41,10 @@ msgstr ""
 msgid "Item successfully updated"
 msgstr ""
 
+#: src/Controller/EntityController.php
+msgid "Item successfully updated: %s"
+msgstr ""
+
 #: inc/ticket.class.php:210
 msgid "Error, please reload the page."
 msgstr ""
@@ -90,7 +94,7 @@ msgid "Please select a valid group"
 msgstr ""
 
 #: front/ticket.form.php:181
-msgid "Escalation to"
+msgid "Transferred to entity"
 msgstr ""
 
 #: front/ticket.form.php:181
@@ -177,6 +181,166 @@ msgstr ""
 msgid "Default category"
 msgstr ""
 
+#: templates/entity.html.twig
+msgid "Assigned group"
+msgstr ""
+
+#: templates/entity.html.twig
+msgid "If group assignment is not required, the ticket will be transferred without a group and all assigned groups will be removed."
+msgstr ""
+
+#: templates/entity.html.twig
+msgid "During transfer, the ticket will always be assigned to this group, and the user will not be able to change it."
+msgstr ""
+
+#: src/Controller/EntityController.php
+msgid "Select a valid assigned group when group assignment is required."
+msgstr ""
+
+#: src/Controller/TicketController.php
+msgid "No assigned group is configured for this entity. Contact an administrator."
+msgstr ""
+
+#: hook.php
+msgid "Profile permissions successfully updated."
+msgstr ""
+
 #: front/ticket.form.php:266
 msgid "Category will be set to null but its configured as mandatory in GLPIs template, please contact your administrator."
+msgstr ""
+
+#: templates/settings.html.twig
+msgid "Entities"
+msgstr ""
+
+#: templates/settings.html.twig
+msgid "Profiles"
+msgstr ""
+
+#: templates/settings.html.twig
+msgid "Groups"
+msgstr ""
+
+#: templates/settings_entities.html.twig
+msgid "Entities with this configuration"
+msgstr ""
+
+#: templates/settings_profiles.html.twig
+msgid "Profiles with this configuration"
+msgstr ""
+
+#: templates/settings_groups.html.twig
+msgid "Default assigned group"
+msgstr ""
+
+#: templates/settings_groups.html.twig
+msgid "This is the group selected in the Entities tab. To change it, update the configuration in the Entities tab and save it."
+msgstr ""
+
+#: templates/settings_groups.html.twig
+msgid "No assigned group is configured. Configure it in the Entities tab before saving group memberships."
+msgstr ""
+
+#: templates/settings_groups.html.twig
+msgid "Groups whose members will be added to the default assigned group"
+msgstr ""
+
+#: templates/settings.html.twig
+msgid "Loading..."
+msgstr ""
+
+#: public/js/pluginSettings.js
+msgid "Saving, this may take a while..."
+msgstr ""
+
+#: public/js/pluginSettings.js
+msgid "The operation failed. Please try again."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Invalid settings action."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Entity settings successfully updated."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Profile settings successfully updated."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Group memberships successfully updated."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Select at least one entity."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Select at least one profile."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Select at least one source group."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Select an assigned group before saving."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "The assigned group must be available in every selected entity. Unavailable in: %s"
+msgstr ""
+
+#: front/config.ajax.php
+msgid "The default category must be available in every selected entity. Unavailable in: %s"
+msgstr ""
+
+#: front/config.ajax.php
+msgid "One or more selected entities do not exist."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "One or more selected profiles do not exist."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "One or more selected groups do not exist."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Choose the assigned group in the Entities tab before saving."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "The configured assigned group no longer exists. Update it in the Entities tab."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "You do not have permission to update the configured assigned group."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "A user could not be added to the configured assigned group."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Profile permissions could not be saved."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "Invalid selection."
+msgstr ""
+
+#: front/config.ajax.php
+msgid "The operation failed. No changes were applied."
+msgstr ""
+
+#: public/js/pluginSettings.js
+msgid "Check all"
+msgstr ""
+
+#: public/js/pluginSettings.js
+msgid "Uncheck all"
 msgstr ""

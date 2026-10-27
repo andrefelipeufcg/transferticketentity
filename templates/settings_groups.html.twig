@@ -1,0 +1,34 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+<form class="tte-settings-form" data-form="groups" method="post">
+    <input type="hidden" name="action" value="save_groups">
+    <div class="row">
+        <div class="col-12">
+            {{ fields.dropdownArrayField('assigned_group_id_display', assigned_group_id, groups, __('Default assigned group', 'transferticketentity'), {
+                'full_width': true,
+                'disabled': true,
+                'helper': __('This is the group selected in the Entities tab. To change it, update the configuration in the Entities tab and save it.', 'transferticketentity')
+            }) }}
+            {% if assigned_group_id <= 0 or assigned_group_name == '' %}
+                <div class="alert alert-warning">{{ __('No assigned group is configured. Configure it in the Entities tab before saving group memberships.', 'transferticketentity') }}</div>
+            {% endif %}
+            {% set groupsList %}
+                <div class="tte-settings-bulk-actions">
+                    <button type="button" class="btn btn-link p-0" data-select-all="groups">{{ __('Check all', 'transferticketentity') }}</button>
+                    <button type="button" class="btn btn-link p-0 text-danger" data-clear-all="groups">{{ __('Uncheck all', 'transferticketentity') }}</button>
+                </div>
+                <div class="tte-settings-select-list">
+                    {% for entity, entityGroups in groups %}
+                        <strong>{{ entity }}</strong>
+                        {% for id, name in entityGroups %}
+                            <label><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endset %}
+            {{ fields.field('groups_list', groupsList, __('Groups whose members will be added to the default assigned group', 'transferticketentity'), {'full_width': true}) }}
+        </div>
+    </div>
+    <div class="card-footer mx-n2 d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy"></i> {{ _x('button', 'Save') }}</button>
+    </div>
+</form>

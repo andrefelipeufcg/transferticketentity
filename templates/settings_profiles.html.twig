@@ -1,0 +1,26 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+<form class="tte-settings-form" data-form="profiles" method="post">
+    <input type="hidden" name="action" value="save_profiles">
+    <div class="row">
+        <div class="col-12">
+            {% for right in rights %}
+                {{ fields.dropdownYesNo(right.field, last.rights[right.field], right.label, {'full_width': true}) }}
+            {% endfor %}
+            {% set profilesList %}
+                <div class="tte-settings-bulk-actions">
+                    <button type="button" class="btn btn-link p-0" data-select-all="profiles">{{ __('Check all', 'transferticketentity') }}</button>
+                    <button type="button" class="btn btn-link p-0 text-danger" data-clear-all="profiles">{{ __('Uncheck all', 'transferticketentity') }}</button>
+                </div>
+                <div class="tte-settings-select-list">
+                    {% for id, name in profiles %}
+                        <label><input type="checkbox" name="profiles_id[]" value="{{ id }}"{% if id in last.profiles %} checked{% endif %}> {{ name }}</label>
+                    {% endfor %}
+                </div>
+            {% endset %}
+            {{ fields.field('profiles_list', profilesList, __('Profiles with this configuration', 'transferticketentity'), {'full_width': true}) }}
+        </div>
+    </div>
+    <div class="card-footer mx-n2 d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy"></i> {{ _x('button', 'Save') }}</button>
+    </div>
+</form>

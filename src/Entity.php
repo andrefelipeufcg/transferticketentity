@@ -36,6 +36,7 @@ use CommonGLPI;
 use Dropdown;
 use Entity as GlpiEntity;
 use Glpi\Application\View\TemplateRenderer;
+use Group;
 use Html;
 use Session;
 
@@ -100,6 +101,7 @@ class Entity extends CommonDBTM
     {
         global $DB;
         $allITILCategories = [];
+        $entityNames = self::getEntityNames();
 
         $result = $DB->request([
             'FROM' => 'glpi_entities',
@@ -121,23 +123,83 @@ class Entity extends CommonDBTM
         foreach ($ancestorsEntities as $ancestorEntity) {
             if ($ancestorEntity == $entity_id) {
                 $result = $DB->request([
+                    'SELECT' => ['id', 'name', 'completename', 'entities_id'],
                     'FROM' => 'glpi_itilcategories',
                     'WHERE' => ['entities_id' => $ancestorEntity],
+                    'ORDER' => 'completename',
                 ]);
 
             } else {
                 $result = $DB->request([
+                    'SELECT' => ['id', 'name', 'completename', 'entities_id'],
                     'FROM' => 'glpi_itilcategories',
                     'WHERE' => ['entities_id' => $ancestorEntity, 'is_recursive' => 1],
+                    'ORDER' => 'completename',
                 ]);
 
             }
             foreach ($result as $data) {
-                $allITILCategories[$data['id']] = $data['name'];
+                $entityLabel = $entityNames[(int) $data['entities_id']] ?? ('#' . $data['entities_id']);
+                $categoryLabel = $data['completename'] ?: $data['name'];
+                $allITILCategories[$entityLabel][$data['id']] = $categoryLabel;
             }
         }
 
         return $allITILCategories;
+    }
+
+    /**
+     * Return entity names for grouping dropdown options.
+     */
+    private static function getEntityNames(): array
+    {
+        global $DB;
+
+        $entityNames = [];
+        foreach ($DB->request([
+            'SELECT' => ['id', 'name', 'completename'],
+            'FROM' => 'glpi_entities',
+        ]) as $entity) {
+            $entityNames[(int) $entity['id']] = $entity['completename'] ?: $entity['name'];
+        }
+
+        return $entityNames;
+    }
+
+    /**
+     * Groups available in the entity (own groups and recursive groups of its ancestors).
+     *
+     * @return array<int, array{id: int, name: string, entities_id: int}>
+     */
+    public static function getEntityGroups(int $entity_id): array
+    {
+        global $DB;
+
+        $criteria = [
+            'SELECT' => ['id', 'name', 'entities_id'],
+            'FROM' => Group::getTable(),
+            'ORDER' => 'name',
+        ];
+        $criteria = array_merge_recursive($criteria, getEntitiesRestrictCriteria(Group::getTable(), '', $entity_id, true));
+
+        return iterator_to_array($DB->request($criteria), false);
+    }
+
+    /**
+     * Return groups keyed by their owning entity for optgroup dropdowns.
+     */
+    private static function getEntityGroupsByEntity(int $entity_id): array
+    {
+        $entityNames = self::getEntityNames();
+        $groupsByEntity = [];
+        foreach (self::getEntityGroups($entity_id) as $group) {
+            $entityLabel = $entityNames[(int) $group['entities_id']] ?? ('#' . $group['entities_id']);
+            $groupsByEntity[$entityLabel][(int) $group['id']] = $group['name'];
+        }
+
+        ksort($groupsByEntity, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $groupsByEntity;
     }
 
     /**
@@ -149,6 +211,7 @@ class Entity extends CommonDBTM
     {
         $checkRights = self::checkRights($entity_id);
         $availableCategories = self::availableCategories($entity_id);
+        $availableGroups = self::getEntityGroupsByEntity((int) $entity_id);
 
         if (empty($checkRights)) {
             $checkRights['allow_entity_only_transfer'] = 0;
@@ -156,6 +219,7 @@ class Entity extends CommonDBTM
             $checkRights['allow_transfer'] = 0;
             $checkRights['keep_category'] = 0;
             $checkRights['itilcategories_id'] = null;
+            $checkRights['groups_id'] = 0;
         }
 
         $entity = new GlpiEntity();
@@ -167,6 +231,7 @@ class Entity extends CommonDBTM
             'canedit' => $entity->can($entity_id, UPDATE),
             'checkRights' => $checkRights,
             'availableCategories' => $availableCategories,
+            'availableGroups' => $availableGroups,
         ]);
 
         return true;

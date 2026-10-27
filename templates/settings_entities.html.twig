@@ -1,0 +1,39 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+<form class="tte-settings-form" data-form="entities" method="post" data-default-group-id="{{ assigned_group_id }}">
+    <input type="hidden" name="action" value="save_entities">
+    <div class="row">
+        <div class="col-12">
+            {{ fields.dropdownYesNo('allow_transfer', last.allow_transfer, __('Allow Transfer function', 'transferticketentity'), {'full_width': true}) }}
+            {{ fields.dropdownYesNo('allow_entity_only_transfer', last.allow_entity_only_transfer, __('Assigned group required', 'transferticketentity'), {
+                'full_width': true,
+                'helper': __('If group assignment is not required, the ticket will be transferred without a group and all assigned groups will be removed.', 'transferticketentity')
+            }) }}
+            {{ fields.dropdownArrayField('groups_id', last.groups_id, groups, __('Assigned group', 'transferticketentity'), {
+                'full_width': true,
+                'display_emptychoice': true,
+                'helper': __('During transfer, the ticket will always be assigned to this group, and the user will not be able to change it.', 'transferticketentity')
+            }) }}
+            {{ fields.dropdownYesNo('justification_transfer', last.justification_transfer, __('Justification required', 'transferticketentity'), {'full_width': true}) }}
+            {{ fields.dropdownYesNo('keep_category', last.keep_category, __('Keep category after transfer', 'transferticketentity'), {'full_width': true}) }}
+            {{ fields.dropdownArrayField('itilcategories_id', last.itilcategories_id, categories, __('Default category', 'transferticketentity'), {
+                'full_width': true,
+                'display_emptychoice': true
+            }) }}
+            {% set entitiesList %}
+                <div class="tte-settings-bulk-actions">
+                    <button type="button" class="btn btn-link p-0" data-select-all="entities">{{ __('Check all', 'transferticketentity') }}</button>
+                    <button type="button" class="btn btn-link p-0 text-danger" data-clear-all="entities">{{ __('Uncheck all', 'transferticketentity') }}</button>
+                </div>
+                <div class="tte-settings-select-list">
+                    {% for id, name in entities %}
+                        <label><input type="checkbox" name="entities_id[]" value="{{ id }}"{% if id in last.entities %} checked{% endif %}> {{ name }}</label>
+                    {% endfor %}
+                </div>
+            {% endset %}
+            {{ fields.field('entities_list', entitiesList, __('Entities with this configuration', 'transferticketentity'), {'full_width': true}) }}
+        </div>
+    </div>
+    <div class="card-footer mx-n2 d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy"></i> {{ _x('button', 'Save') }}</button>
+    </div>
+</form>

@@ -31,6 +31,31 @@
 
 use GlpiPlugin\Transferticketentity\Profile;
 
+function plugin_transferticketentity_profile_right_saved($item): void
+{
+    static $messageAdded = false;
+    $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+
+    if (
+        $messageAdded
+        || str_ends_with((string) $requestPath, '/config.ajax.php')
+        || !($item instanceof ProfileRight)
+        || !in_array($item->fields['name'] ?? '', [
+            'plugin_transferticketentity_use',
+            'plugin_transferticketentity_bypass',
+        ], true)
+    ) {
+        return;
+    }
+
+    $messageAdded = true;
+    Session::addMessageAfterRedirect(
+        __('Profile permissions successfully updated.', 'transferticketentity'),
+        true,
+        INFO
+    );
+}
+
 /**
  * Install hook
  *
@@ -53,6 +78,7 @@ function plugin_transferticketentity_install()
             `allow_transfer` BOOLEAN NOT NULL DEFAULT 0,
             `keep_category` BOOLEAN NOT NULL DEFAULT 0,
             `itilcategories_id` INT {$default_key_sign},
+            `groups_id` INT {$default_key_sign} NOT NULL DEFAULT 0,
             PRIMARY KEY  (`id`),
             KEY `entities_id` (`entities_id`),
             KEY `itilcategories_id` (`itilcategories_id`)
@@ -62,6 +88,14 @@ function plugin_transferticketentity_install()
     }
 
     $migration = new Migration(PLUGIN_TRANSFERTICKETENTITY_VERSION);
+
+    // Default group assigned to transferred tickets, 0 means no default group
+    $migration->addField(
+        'glpi_plugin_transferticketentity_entities_settings',
+        'groups_id',
+        'fkey',
+        ['after' => 'itilcategories_id']
+    );
 
     // GLPI does not use foreign keys, they were preventing entities and categories deletion
     $migration->dropForeignKeyContraint(
@@ -94,6 +128,12 @@ function plugin_transferticketentity_uninstall()
     ProfileRight::deleteProfileRights(array_map(fn($right) => $right['field'], Profile::getAllRights()));
 
     $DB->dropTable('glpi_plugin_transferticketentity_entities_settings', true);
+    Config::deleteConfigurationValues('transferticketentity', [
+        'assigned_group_id',
+        'last_applied_entities',
+        'last_applied_profiles',
+        'last_applied_groups',
+    ]);
 
     return true;
 }

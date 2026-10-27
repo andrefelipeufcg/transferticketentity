@@ -16,14 +16,16 @@
         'full_width': true,
         'on_change': 'tteGetEntityGroups(this)'
     }) }}
-    {{ fields.dropdownArrayField('group_choice', null, {}, __("Select the group to assign", "transferticketentity"), {
+    {{ fields.dropdownArrayField('group_choice', null, {}, __("Assigned group", "transferticketentity"), {
         'add_field_attribs': {
             'style': 'display: none;'
         },
         'full_width': true,
+        'disabled': true,
         'display_emptychoice': true,
         'emptylabel': __("None", "transferticketentity"),
     }) }}
+    {{ fields.hiddenField('group_choice', 0, '') }}
 
 
 
