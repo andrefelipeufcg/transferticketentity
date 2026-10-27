@@ -16,6 +16,31 @@ $(function() {
     const activeOverlays = new Map();
     let overlayId = 0;
 
+    // Bootstrap appends tooltip popups to body, so also remove any detached popup.
+    function hideOpenTooltips() {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(trigger) {
+            const tooltip = bootstrap.Tooltip.getInstance(trigger);
+            if (tooltip) {
+                tooltip.hide();
+            }
+        });
+        document.querySelectorAll('.tooltip.show').forEach(function(popup) {
+            popup.classList.remove('show');
+            popup.remove();
+        });
+    }
+
+    document.addEventListener('pointerout', function(event) {
+        const trigger = $(event.target).closest('[data-bs-toggle="tooltip"]')[0];
+        if (trigger && !trigger.contains(event.relatedTarget)) {
+            hideOpenTooltips();
+        }
+    }, true);
+
+    // Hide helpers when navigating between settings tabs or leaving the page.
+    $(document).on('click', '[data-bs-toggle="tab"], [data-bs-toggle="pill"]', hideOpenTooltips);
+    $(document).on('mouseleave', '[data-bs-toggle="tooltip"]', hideOpenTooltips);
+
     function showOverlay(message) {
         const id = ++overlayId;
         activeOverlays.set(id, message);
