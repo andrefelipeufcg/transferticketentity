@@ -20,7 +20,9 @@
                     {% for entity, entityGroups in groups %}
                         <strong>{{ entity }}</strong>
                         {% for id, name in entityGroups %}
-                            <label><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                            {% if id != assigned_group_id %}
+                                <label><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                            {% endif %}
                         {% endfor %}
                     {% endfor %}
                 </div>
