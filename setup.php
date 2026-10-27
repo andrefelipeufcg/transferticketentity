@@ -29,9 +29,9 @@ function plugin_version_transferticketentity()
     return [
         'name'           => 'TransferTicketEntity',
         'version'        => PLUGIN_TRANSFERTICKETENTITY_VERSION,
-        'author'         => 'Yannick COMBA',
+        'author'         => 'andrefelipeufcg',
         'license'        => 'GPLv3+',
-        'homepage'       => 'https://github.com/departement-maine-et-loire/',
+        'homepage'       => 'https://github.com/andrefelipeufcg/transferticketentity/',
         'requirements'   => [
             'glpi'   => [
                 'min' => PLUGIN_TRANSFERTICKETENTITY_MIN_GLPI,
