@@ -14,17 +14,35 @@
             {% set groupsList %}
                 <div class="tte-settings-bulk-actions">
                     <button type="button" class="btn btn-link p-0" data-select-all="groups">{{ __('Check all', 'transferticketentity') }}</button>
+                    <span aria-hidden="true">|</span>
                     <button type="button" class="btn btn-link p-0 text-danger" data-clear-all="groups">{{ __('Uncheck all', 'transferticketentity') }}</button>
                 </div>
-                <div class="tte-settings-select-list">
-                    {% for entity, entityGroups in groups %}
-                        <strong>{{ entity }}</strong>
-                        {% for id, name in entityGroups %}
-                            {% if id != assigned_group_id %}
-                                <label><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                <div class="tte-settings-list-container">
+                    {% include '@transferticketentity/settings_list_filter.html.twig' %}
+                    <div class="tte-settings-select-list">
+                        {% for entity, entityGroups in groups %}
+                            {% set availableCount = 0 %}
+                            {% set selectedCount = 0 %}
+                            {% for id, name in entityGroups %}
+                                {% if id != assigned_group_id %}
+                                    {% set availableCount = availableCount + 1 %}
+                                    {% if id in last.groups %}
+                                        {% set selectedCount = selectedCount + 1 %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if availableCount > 0 %}
+                                <div data-group-entity>
+                                    <label data-group-entity-label><strong><input type="checkbox" data-select-entity-groups{% if selectedCount == availableCount %} checked{% endif %}> {{ entity }}</strong></label>
+                                    {% for id, name in entityGroups %}
+                                        {% if id != assigned_group_id %}
+                                            <label class="tte-settings-group-option" data-filter-item><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             {% endif %}
                         {% endfor %}
-                    {% endfor %}
+                    </div>
                 </div>
             {% endset %}
             {{ fields.field('groups_list', groupsList, __('Groups whose members will be added to the default assigned group', 'transferticketentity'), {'full_width': true}) }}

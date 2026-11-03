@@ -9,12 +9,16 @@
             {% set profilesList %}
                 <div class="tte-settings-bulk-actions">
                     <button type="button" class="btn btn-link p-0" data-select-all="profiles">{{ __('Check all', 'transferticketentity') }}</button>
+                    <span aria-hidden="true">|</span>
                     <button type="button" class="btn btn-link p-0 text-danger" data-clear-all="profiles">{{ __('Uncheck all', 'transferticketentity') }}</button>
                 </div>
-                <div class="tte-settings-select-list">
-                    {% for id, name in profiles %}
-                        <label><input type="checkbox" name="profiles_id[]" value="{{ id }}"{% if id in last.profiles %} checked{% endif %}> {{ name }}</label>
-                    {% endfor %}
+                <div class="tte-settings-list-container">
+                    {% include '@transferticketentity/settings_list_filter.html.twig' %}
+                    <div class="tte-settings-select-list">
+                        {% for id, name in profiles %}
+                            <label data-filter-item><input type="checkbox" name="profiles_id[]" value="{{ id }}"{% if id in last.profiles %} checked{% endif %}> {{ name }}</label>
+                        {% endfor %}
+                    </div>
                 </div>
             {% endset %}
             {{ fields.field('profiles_list', profilesList, __('Profiles with this configuration', 'transferticketentity'), {'full_width': true}) }}

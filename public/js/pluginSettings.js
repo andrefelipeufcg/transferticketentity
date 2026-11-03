@@ -79,6 +79,47 @@ $(function() {
         return form.find('input[type="checkbox"][name="' + checkboxNames[kind] + '"]');
     }
 
+    function syncGroupEntityCheckbox(entity) {
+        const groups = checkboxes(entity, 'groups');
+        entity.find('[data-select-entity-groups]').prop(
+            'checked',
+            groups.length > 0 && groups.filter(':checked').length === groups.length
+        );
+    }
+
+    function normalizeFilterText(value) {
+        return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    $(document).on('input', '.tte-settings-form [data-list-filter]', function() {
+        const form = $(this).closest('form');
+        const terms = normalizeFilterText(this.value.trim()).split(/\s+/).filter(Boolean);
+        const matches = (value) => {
+            const text = normalizeFilterText(value);
+            return terms.every((term) => text.includes(term));
+        };
+
+        if (form.attr('data-form') === 'groups') {
+            form.find('[data-group-entity]').each(function() {
+                const entity = $(this);
+                const entityName = entity.find('[data-group-entity-label]').text();
+                let hasMatches = false;
+                entity.find('[data-filter-item]').each(function() {
+                    const item = $(this);
+                    const visible = matches(entityName + ' ' + item.text());
+                    item.toggleClass('d-none', !visible);
+                    hasMatches = hasMatches || visible;
+                });
+                entity.toggleClass('d-none', !hasMatches);
+            });
+        } else {
+            form.find('.tte-settings-select-list [data-filter-item]').each(function() {
+                const item = $(this);
+                item.toggleClass('d-none', !matches(item.text()));
+            });
+        }
+    });
+
     // The native GLPI tab loader requests these URLs: show the loading overlay while they run.
     function isSettingsTabRequest(settings) {
         const url = decodeURIComponent(String(settings.url || ''));
@@ -153,7 +194,21 @@ $(function() {
         const button = $(this);
         const checked = button.is('[data-select-all]');
         const kind = button.attr(checked ? 'data-select-all' : 'data-clear-all');
-        checkboxes(button.closest('form'), kind).prop('checked', checked);
+        const form = button.closest('form');
+        checkboxes(form, kind).prop('checked', checked);
+        if (kind === 'groups') {
+            form.find('[data-group-entity]').each(function() {
+                syncGroupEntityCheckbox($(this));
+            });
+        }
+    });
+
+    $(document).on('change', 'form[data-form="groups"] [data-select-entity-groups]', function() {
+        checkboxes($(this).closest('[data-group-entity]'), 'groups').prop('checked', this.checked);
+    });
+
+    $(document).on('change', 'form[data-form="groups"] input[name="groups_id[]"]', function() {
+        syncGroupEntityCheckbox($(this).closest('[data-group-entity]'));
     });
 
     $(document).on('change', 'form[data-form="entities"] select[name="allow_transfer"]', function() {

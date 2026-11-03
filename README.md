@@ -37,6 +37,10 @@ Administradores com permissão para atualizar a configuração também podem uti
 - **Perfis**: aplica os dois direitos do plugin a vários perfis simultaneamente.
 - **Grupos**: adiciona ao grupo atribuído padrão os usuários dos grupos selecionados. Usuários que já são membros não são duplicados. O grupo atribuído padrão é definido na aba Entidades.
 
+Na aba **Grupos**, a caixa ao lado de cada entidade permite marcar ou desmarcar todos os seus grupos. Ela fica marcada quando todos os grupos disponíveis da entidade estão selecionados.
+
+Use o filtro acima de cada lista para localizar itens sem alterar suas seleções. Os botões de seleção em massa e a caixa de seleção da entidade continuam afetando todos os itens correspondentes, inclusive os ocultos pelo filtro.
+
 O carregamento das abas e o salvamento exibem um indicador de progresso.
 
 ## Compatibilidade
@@ -89,6 +93,10 @@ Les administrateurs ayant le droit de mise à jour de la configuration peuvent a
 - **Entités** : applique les paramètres de transfert à plusieurs entités à la fois. Le groupe et la catégorie choisis doivent être accessibles dans toutes les entités sélectionnées.
 - **Profils** : applique les deux droits du plugin à plusieurs profils à la fois.
 - **Groupes** : ajoute au groupe attribué par défaut les utilisateurs des groupes sélectionnés. Les utilisateurs déjà membres ne sont pas dupliqués. Les utilisateurs appartenant à des groupes désélectionnés sont retirés du groupe attribué, sauf s'ils appartiennent également à un groupe sélectionné. Le groupe attribué par défaut ne peut pas être sélectionné comme groupe source et est défini dans l'onglet Entités.
+
+Dans l'onglet **Groupes**, la case à côté de chaque entité permet de sélectionner ou désélectionner tous ses groupes. Elle est cochée lorsque tous les groupes disponibles de l'entité sont sélectionnés.
+
+Le filtre au-dessus de chaque liste permet de trouver des éléments sans modifier leur sélection. Les actions de sélection en masse et la case de l'entité s'appliquent aussi aux éléments masqués par le filtre.
 
 Les paramètres sont conservés et rechargés lors de la réouverture de la page de configuration. Les entités et profils désélectionnés sont automatiquement désactivés lors de l'enregistrement. Le chargement des onglets et l'enregistrement affichent un indicateur de progression.
 
@@ -144,6 +152,10 @@ Administrators with permission to update the configuration can also use the plug
 - **Entities**: applies transfer settings to multiple entities at once. The selected group and category must be available in every selected entity.
 - **Profiles**: applies the plugin's two rights to multiple profiles at once.
 - **Groups**: adds users from the selected groups to the default assigned group. Existing memberships are not duplicated. Users belonging to deselected groups are removed from the assigned group unless they also belong to a selected group. The default assigned group cannot be selected as a source group and is configured in the Entities tab.
+
+In the **Groups** tab, the checkbox next to each entity selects or clears all of its groups. It is checked when all available groups in that entity are selected.
+
+Use the filter above each list to find items without changing their selections. Bulk actions and entity checkboxes still affect all corresponding items, including those hidden by the filter.
 
 Settings are persisted and restored when the configuration page is reopened. Deselected entities and profiles are automatically disabled when settings are saved. Loading tabs and saving display a progress indicator.
 

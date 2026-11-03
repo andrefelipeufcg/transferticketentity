@@ -25,6 +25,10 @@ msgstr ""
 msgid "Transfer Ticket Entity"
 msgstr "Transferência de chamados entre entidades"
 
+#: templates/settings_list_filter.html.twig
+msgid "Type what you are looking for. Bulk actions affect all items, including those hidden by the filter."
+msgstr "Digite o que você está procurando. As ações em massa afetam todos os itens, inclusive os ocultos pelo filtro."
+
 #: inc/profile.class.php:74
 msgid "Change rights"
 msgstr "Mudar permissões"
