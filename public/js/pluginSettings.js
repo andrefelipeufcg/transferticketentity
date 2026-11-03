@@ -87,6 +87,39 @@ $(function() {
         );
     }
 
+    function normalizeFilterText(value) {
+        return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    $(document).on('input', '.tte-settings-form [data-list-filter]', function() {
+        const form = $(this).closest('form');
+        const terms = normalizeFilterText(this.value.trim()).split(/\s+/).filter(Boolean);
+        const matches = (value) => {
+            const text = normalizeFilterText(value);
+            return terms.every((term) => text.includes(term));
+        };
+
+        if (form.attr('data-form') === 'groups') {
+            form.find('[data-group-entity]').each(function() {
+                const entity = $(this);
+                const entityName = entity.find('[data-group-entity-label]').text();
+                let hasMatches = false;
+                entity.find('[data-filter-item]').each(function() {
+                    const item = $(this);
+                    const visible = matches(entityName + ' ' + item.text());
+                    item.toggleClass('d-none', !visible);
+                    hasMatches = hasMatches || visible;
+                });
+                entity.toggleClass('d-none', !hasMatches);
+            });
+        } else {
+            form.find('.tte-settings-select-list [data-filter-item]').each(function() {
+                const item = $(this);
+                item.toggleClass('d-none', !matches(item.text()));
+            });
+        }
+    });
+
     // The native GLPI tab loader requests these URLs: show the loading overlay while they run.
     function isSettingsTabRequest(settings) {
         const url = decodeURIComponent(String(settings.url || ''));

@@ -25,10 +25,13 @@
                     <span aria-hidden="true">|</span>
                     <button type="button" class="btn btn-link p-0 text-danger" data-clear-all="entities">{{ __('Uncheck all', 'transferticketentity') }}</button>
                 </div>
-                <div class="tte-settings-select-list">
-                    {% for id, name in entities %}
-                        <label><input type="checkbox" name="entities_id[]" value="{{ id }}"{% if id in last.entities %} checked{% endif %}> {{ name }}</label>
-                    {% endfor %}
+                <div class="tte-settings-list-container">
+                    {% include '@transferticketentity/settings_list_filter.html.twig' %}
+                    <div class="tte-settings-select-list">
+                        {% for id, name in entities %}
+                            <label data-filter-item><input type="checkbox" name="entities_id[]" value="{{ id }}"{% if id in last.entities %} checked{% endif %}> {{ name }}</label>
+                        {% endfor %}
+                    </div>
                 </div>
             {% endset %}
             {{ fields.field('entities_list', entitiesList, __('Entities with this configuration', 'transferticketentity'), {'full_width': true}) }}
