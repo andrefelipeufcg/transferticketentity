@@ -11,7 +11,11 @@ use Session;
 
 class Settings extends CommonGLPI
 {
-    public $taborientation = 'vertical';
+    public function __construct()
+    {
+        parent::__construct();
+        $this->taborientation = 'vertical';
+    }
 
     public static function getTypeName($nb = 0)
     {
