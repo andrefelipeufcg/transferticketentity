@@ -79,6 +79,14 @@ $(function() {
         return form.find('input[type="checkbox"][name="' + checkboxNames[kind] + '"]');
     }
 
+    function syncGroupEntityCheckbox(entity) {
+        const groups = checkboxes(entity, 'groups');
+        entity.find('[data-select-entity-groups]').prop(
+            'checked',
+            groups.length > 0 && groups.filter(':checked').length === groups.length
+        );
+    }
+
     // The native GLPI tab loader requests these URLs: show the loading overlay while they run.
     function isSettingsTabRequest(settings) {
         const url = decodeURIComponent(String(settings.url || ''));
@@ -153,7 +161,21 @@ $(function() {
         const button = $(this);
         const checked = button.is('[data-select-all]');
         const kind = button.attr(checked ? 'data-select-all' : 'data-clear-all');
-        checkboxes(button.closest('form'), kind).prop('checked', checked);
+        const form = button.closest('form');
+        checkboxes(form, kind).prop('checked', checked);
+        if (kind === 'groups') {
+            form.find('[data-group-entity]').each(function() {
+                syncGroupEntityCheckbox($(this));
+            });
+        }
+    });
+
+    $(document).on('change', 'form[data-form="groups"] [data-select-entity-groups]', function() {
+        checkboxes($(this).closest('[data-group-entity]'), 'groups').prop('checked', this.checked);
+    });
+
+    $(document).on('change', 'form[data-form="groups"] input[name="groups_id[]"]', function() {
+        syncGroupEntityCheckbox($(this).closest('[data-group-entity]'));
     });
 
     $(document).on('change', 'form[data-form="entities"] select[name="allow_transfer"]', function() {

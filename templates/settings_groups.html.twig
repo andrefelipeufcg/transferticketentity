@@ -18,12 +18,26 @@
                 </div>
                 <div class="tte-settings-select-list">
                     {% for entity, entityGroups in groups %}
-                        <strong>{{ entity }}</strong>
+                        {% set availableCount = 0 %}
+                        {% set selectedCount = 0 %}
                         {% for id, name in entityGroups %}
                             {% if id != assigned_group_id %}
-                                <label><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                                {% set availableCount = availableCount + 1 %}
+                                {% if id in last.groups %}
+                                    {% set selectedCount = selectedCount + 1 %}
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
+                        {% if availableCount > 0 %}
+                            <div data-group-entity>
+                                <label><strong><input type="checkbox" data-select-entity-groups{% if selectedCount == availableCount %} checked{% endif %}> {{ entity }}</strong></label>
+                                {% for id, name in entityGroups %}
+                                    {% if id != assigned_group_id %}
+                                        <label class="tte-settings-group-option"><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endset %}
