@@ -26,10 +26,10 @@ Para configurar os pré-requisitos da transferência entre entidades:
   - Quando desativado, remove as SLAs e suas ações de escalonamento pendentes; os prazos existentes e as OLAs não são alterados por essa opção.
   - Nas configurações existentes, a opção inicia ativada.
 - **Manter categoria após a transferência**:
-  - Quando ativado, a categoria será mantida somente se estiver disponível na entidade de destino; caso contrário, será removida.
-  - Quando desativado, a categoria será removida.
-  - Também é possível selecionar uma categoria padrão.
-  - :warning: Se a categoria for obrigatória na entidade de destino, por meio dos modelos do GLPI, e for removida durante a transferência, será exibido um erro.
+  - Quando desativado, é possível configurar uma categoria padrão, que será exibida e aplicada sem permitir edição durante a transferência.
+  - Sem uma categoria padrão, a categoria atual é exibida e pode ser alterada para uma categoria disponível na entidade de destino.
+  - Se a categoria atual não estiver disponível no destino, é necessário escolher outra antes da transferência.
+  - Se a categoria for obrigatória no modelo do GLPI da entidade de destino, não será possível transferir sem categoria.
 
 ## Onde configurar o plugin
 
@@ -141,10 +141,10 @@ To configure entity transfer prerequisites :
     - If yes, the input field is displayed with a red highlighting.
     - If no, it will appear with a blue highlighting, but the input field will remain active if required.
 - Keep category after transfer :
-    - If yes, category's ticket will be keep only if it is available in the target entity, otherwise it will be reset to null.
-    - If no, category's ticket will be set to null.
-    - If no, it's possible to select a default category.
-    - :warning: If category is mandatory in the chosen entity (via GLPI's templates) and it will be equal to null after transfer, an error will occur.
+    - When disabled, a default category can be configured; it is displayed and applied without allowing edits during transfer.
+    - Without a default category, the current category is displayed and can be changed to one available in the destination entity.
+    - If the current category is unavailable in the destination, another must be selected before transfer.
+    - If the destination entity's GLPI template requires a category, the ticket cannot be transferred without one.
 
 ## Where set up the plugin
 

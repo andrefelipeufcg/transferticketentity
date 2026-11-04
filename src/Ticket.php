@@ -37,6 +37,7 @@ use Dropdown;
 use Entity as GlpiEntity;
 use Glpi\Application\View\TemplateRenderer;
 use Html;
+use ITILCategory;
 use Session;
 use Ticket as GlpiTicket;
 
@@ -174,10 +175,23 @@ class Ticket extends CommonDBTM
         ksort($entityGroups, SORT_NATURAL | SORT_FLAG_CASE);
         $entityDropdownValues = ['-1' => Dropdown::EMPTY_VALUE] + $entityGroups;
 
-        TemplateRenderer::getInstance()->display('@transferticketentity/ticket.html.twig', [
+        $category = new ITILCategory();
+        $categoryId = (int) $ticket->fields['itilcategories_id'];
+        $currentCategoryName = $categoryId > 0 && $category->getFromDB($categoryId)
+            ? ($category->fields['completename'] ?: $category->fields['name'])
+            : ($categoryId > 0 ? '#' . $categoryId : '');
+
+        $scriptVersion = hash_file('sha256', dirname(__DIR__) . '/public/js/ticketTransfer.js');
+        if ($scriptVersion === false) {
+            throw new \RuntimeException('Unable to read the ticket transfer script.');
+        }
+
+        TemplateRenderer::getInstance()->display('@transferticketentity/ticket_transfer.html.twig', [
             'item' => $ticket,
             'form_path' => self::getFormURL(),
             'entityDropdownValues' => $entityDropdownValues,
+            'currentCategoryName' => $currentCategoryName,
+            'ticketTransferScriptVersion' => $scriptVersion,
             'canedit' => true,
         ]);
     }

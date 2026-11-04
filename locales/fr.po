@@ -207,6 +207,18 @@ msgstr ""
 msgid "optional"
 msgstr "facultatif"
 
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The current category is not available in the destination entity. Select another category."
+msgstr "La catégorie actuelle n'est pas disponible dans l'entité de destination. Sélectionnez une autre catégorie."
+
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The default category is not available in the destination entity. Contact an administrator."
+msgstr "La catégorie par défaut n'est pas disponible dans l'entité de destination. Contactez un administrateur."
+
+#: public/js/ticketTransfer.js
+msgid "Unable to load destination entity settings. Please try again."
+msgstr "Impossible de charger les paramètres de l'entité de destination. Veuillez réessayer."
+
 #: inc/entity.class.php:219
 msgid "Default category"
 msgstr "Catégorie par défaut"

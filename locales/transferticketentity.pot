@@ -192,6 +192,18 @@ msgstr ""
 msgid "optional"
 msgstr ""
 
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The current category is not available in the destination entity. Select another category."
+msgstr ""
+
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The default category is not available in the destination entity. Contact an administrator."
+msgstr ""
+
+#: public/js/ticketTransfer.js
+msgid "Unable to load destination entity settings. Please try again."
+msgstr ""
+
 #: inc/entity.class.php:219
 msgid "Default category"
 msgstr ""

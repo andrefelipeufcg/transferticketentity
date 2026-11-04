@@ -5,7 +5,9 @@
           action="{{ form_path }}"
           method="post"
           data-track-changes="true"
-          id="tte_form">
+          id="tte_form"
+          data-current-category-id="{{ item.fields['itilcategories_id'] }}"
+          data-current-category-name="{{ currentCategoryName }}">
         <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
 {% endif %}
 
@@ -15,6 +17,14 @@
     {{ fields.dropdownArrayField('entity_choice', null, entityDropdownValues, __("Select ticket entity to transfer", "transferticketentity"), {
         'full_width': true,
         'on_change': 'tteGetEntityGroups(this)'
+    }) }}
+    {{ fields.dropdownArrayField('category_choice', null, {}, __('Category'), {
+        'add_field_attribs': {
+            'style': 'display: none;'
+        },
+        'full_width': true,
+        'display_emptychoice': true,
+        'emptylabel': __('None'),
     }) }}
     {{ fields.dropdownArrayField('group_choice', null, {}, __("Assigned group", "transferticketentity"), {
         'add_field_attribs': {
@@ -40,7 +50,7 @@
         </div>
     </form>
 {% endif %}
-{{ call('Html::script', ['/plugins/transferticketentity/js/ticketTransfer.js']) | raw }}
+{{ call('Html::script', ['/plugins/transferticketentity/js/ticketTransfer.js', {'version': ticketTransferScriptVersion}]) | raw }}
 {{ call('Html::css', ['/plugins/transferticketentity/css/style.css']) | raw }}
 <div id="transferticketentity_dialog" style="display: none;">
     <p>{{ __("Once the transfer has been completed, the ticket will remain visible only if you have the required rights.", "transferticketentity") }}</p>
@@ -48,5 +58,4 @@
         <label for='tte_justification'>{{ __("Please explain your transfer", "transferticketentity") }}</label>
         <textarea id='tte_justification' name='tte_justification'></textarea>
     </div>
-    <p id='tte_adv-msg'>{{ __("Warning, category will be reset if it does not exist in the target entity.", "transferticketentity") }}</p>
 </div>

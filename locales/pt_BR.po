@@ -168,6 +168,18 @@ msgstr "Não foi possível transferir o chamado."
 msgid "Keep category after transfer"
 msgstr "Manter a categoria após a transferência"
 
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The current category is not available in the destination entity. Select another category."
+msgstr "A categoria atual não está disponível na entidade de destino. Selecione outra categoria."
+
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The default category is not available in the destination entity. Contact an administrator."
+msgstr "A categoria padrão não está disponível na entidade de destino. Entre em contato com um administrador."
+
+#: public/js/ticketTransfer.js
+msgid "Unable to load destination entity settings. Please try again."
+msgstr "Não foi possível carregar as configurações da entidade de destino. Tente novamente."
+
 #: templates/entity.html.twig
 msgid "Default category"
 msgstr "Categoria padrão"
