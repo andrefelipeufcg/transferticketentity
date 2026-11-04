@@ -220,6 +220,7 @@ class Entity extends CommonDBTM
             $checkRights['keep_category'] = 0;
             $checkRights['itilcategories_id'] = null;
             $checkRights['groups_id'] = 0;
+            $checkRights['keep_sla'] = 1;
         }
 
         $entity = new GlpiEntity();

@@ -154,6 +154,17 @@ msgid "Justification required"
 msgstr "Exigir justificativa"
 
 #: templates/entity.html.twig
+msgid "Keep SLA after transfer"
+msgstr "Manter a SLA após a transferência"
+
+#: templates/entity.html.twig
+msgid "If enabled, the SLA assigned to the ticket will be preserved after the transfer. If disabled, the SLA will be removed."
+msgstr "Se habilitado, a SLA atribuída ao chamado será mantida após a transferência. Se desabilitado, a SLA será removida."
+
+msgid "Unable to transfer the ticket."
+msgstr "Não foi possível transferir o chamado."
+
+#: templates/entity.html.twig
 msgid "Keep category after transfer"
 msgstr "Manter a categoria após a transferência"
 

@@ -144,6 +144,16 @@ msgstr "Se requiere grupo asignado"
 msgid "Justification required"
 msgstr "Justificación requerida"
 
+#: templates/entity.html.twig templates/settings_entities.html.twig
+msgid "Keep SLA after transfer"
+msgstr "Mantener el SLA después de la transferencia"
+
+msgid "If enabled, the SLA assigned to the ticket will be preserved after the transfer. If disabled, the SLA will be removed."
+msgstr "Si está activado, el SLA asignado al ticket se mantendrá después de la transferencia. Si está desactivado, se eliminará el SLA."
+
+msgid "Unable to transfer the ticket."
+msgstr "No se pudo transferir el ticket."
+
 #: inc/entity.class.php:137
 msgid "Allow Transfer function"
 msgstr "Permitir función de transferencia"

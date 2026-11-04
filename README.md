@@ -21,6 +21,10 @@ Para configurar os pré-requisitos da transferência entre entidades:
 - **Exigir justificativa para transferência**:
   - Quando ativado, o campo de justificativa será exibido com destaque vermelho.
   - Quando desativado, o campo será exibido com destaque azul, mas continuará disponível para preenchimento.
+- **Manter a SLA após a transferência**:
+  - Quando ativado, mantém as SLAs de atendimento e solução do chamado.
+  - Quando desativado, remove as SLAs e suas ações de escalonamento pendentes; os prazos existentes e as OLAs não são alterados por essa opção.
+  - Nas configurações existentes, a opção inicia ativada.
 - **Manter categoria após a transferência**:
   - Quando ativado, a categoria será mantida somente se estiver disponível na entidade de destino; caso contrário, será removida.
   - Quando desativado, a categoria será removida.

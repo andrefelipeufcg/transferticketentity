@@ -54,6 +54,7 @@ final class EntityController extends AbstractController
                 'keep_category' => $request->request->getBoolean('keep_category'),
                 'itilcategories_id' => $itilcategories_id > 0 ? $itilcategories_id : null,
                 'groups_id' => $groups_id,
+                'keep_sla' => $allowTransfer && $request->request->getBoolean('keep_sla'),
             ],
             [
                 'entities_id' => $entity_id,

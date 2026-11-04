@@ -149,6 +149,16 @@ msgstr "É obrigatório atribuir a um grupo"
 msgid "Justification required"
 msgstr "Obrigatório preencher justificação"
 
+#: templates/entity.html.twig templates/settings_entities.html.twig
+msgid "Keep SLA after transfer"
+msgstr "Manter o SLA após a transferência"
+
+msgid "If enabled, the SLA assigned to the ticket will be preserved after the transfer. If disabled, the SLA will be removed."
+msgstr "Se ativado, o SLA atribuído ao pedido será mantido após a transferência. Se desativado, o SLA será removido."
+
+msgid "Unable to transfer the ticket."
+msgstr "Não foi possível transferir o pedido."
+
 #: inc/entity.class.php:137
 msgid "Allow Transfer function"
 msgstr "Permitir a funcionalidade de Transferência"

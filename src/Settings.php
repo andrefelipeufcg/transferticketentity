@@ -83,6 +83,7 @@ class Settings extends CommonGLPI
                         'allow_transfer' => (int) ($last['allow_transfer'] ?? 0),
                         'allow_entity_only_transfer' => (int) ($last['allow_entity_only_transfer'] ?? 0),
                         'groups_id' => (int) ($last['groups_id'] ?? 0) ?: $assignedGroupId,
+                        'keep_sla' => (int) ($last['keep_sla'] ?? 1),
                         'justification_transfer' => (int) ($last['justification_transfer'] ?? 0),
                         'keep_category' => (int) ($last['keep_category'] ?? 0),
                         'itilcategories_id' => (int) ($last['itilcategories_id'] ?? 0),

@@ -154,6 +154,7 @@ $(function() {
 
         const allowed = isTransferAllowed(form);
         hide('allow_entity_only_transfer', !allowed);
+        hide('keep_sla', !allowed);
         hide('justification_transfer', !allowed);
         hide('keep_category', !allowed);
         hide('groups_id', !allowed || String(field('allow_entity_only_transfer').val()) !== '1');
