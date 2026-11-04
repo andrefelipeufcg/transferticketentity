@@ -28,6 +28,20 @@ final class TicketController extends AbstractController
     private static ?GlpiTicket $transferTicket = null;
     private static bool $keepTransferSla = true;
     private static int $transferCategory = 0;
+    private static array $originalTransferFields = [];
+
+    private static function getTransferFields(array $originalFields): array
+    {
+        return [
+            'itilcategories_id' => self::$transferCategory,
+            'slas_id_tto' => self::$keepTransferSla ? $originalFields['slas_id_tto'] : 0,
+            'slas_id_ttr' => self::$keepTransferSla ? $originalFields['slas_id_ttr'] : 0,
+            'time_to_own' => $originalFields['time_to_own'],
+            'time_to_resolve' => $originalFields['time_to_resolve'],
+            'slalevels_id_ttr' => self::$keepTransferSla ? $originalFields['slalevels_id_ttr'] : 0,
+            'sla_waiting_duration' => self::$keepTransferSla ? $originalFields['sla_waiting_duration'] : 0,
+        ];
+    }
 
     public static function applyTransferSlaSetting(GlpiTicket $ticket): void
     {
@@ -35,16 +49,47 @@ final class TicketController extends AbstractController
             return;
         }
 
-        $ticket->input['itilcategories_id'] = self::$transferCategory;
         // GLPI strips SLA input without SLM rights and business rules can change it.
-        foreach (['slas_id_tto', 'slas_id_ttr'] as $field) {
-            $ticket->input[$field] = self::$keepTransferSla ? $ticket->fields[$field] : 0;
+        foreach (self::getTransferFields($ticket->fields) as $field => $value) {
+            $ticket->input[$field] = $value;
         }
-        foreach (['time_to_own', 'time_to_resolve'] as $field) {
-            $ticket->input[$field] = $ticket->fields[$field];
+    }
+
+    public static function applyTransferSettingsAfterUpdate(GlpiTicket $ticket): void
+    {
+        if ($ticket !== self::$transferTicket || !is_array($ticket->input)) {
+            return;
         }
-        foreach (['slalevels_id_ttr', 'sla_waiting_duration'] as $field) {
-            $ticket->input[$field] = self::$keepTransferSla ? $ticket->fields[$field] : 0;
+
+        // GLPI before 11.0.9 has no hook between input preparation and the database update.
+        $desiredFields = self::getTransferFields(self::$originalTransferFields);
+        $correctedFields = [];
+        $previousValues = [];
+        foreach ($desiredFields as $field => $value) {
+            if ($ticket->fields[$field] != $value) {
+                $previousValues[$field] = $ticket->fields[$field];
+                $ticket->fields[$field] = $value;
+                $correctedFields[] = $field;
+            }
+        }
+        if ($correctedFields && !$ticket->updateInDB($correctedFields, $previousValues)) {
+            throw new \RuntimeException('Unable to apply ticket transfer settings.');
+        }
+
+        foreach ($desiredFields as $field => $value) {
+            $ticket->input[$field] = $value;
+            $index = array_search($field, $ticket->updates, true);
+            if ($value == self::$originalTransferFields[$field]) {
+                if ($index !== false) {
+                    unset($ticket->updates[$index]);
+                }
+                unset($ticket->oldvalues[$field]);
+            } else {
+                if ($index === false) {
+                    $ticket->updates[] = $field;
+                }
+                $ticket->oldvalues[$field] = self::$originalTransferFields[$field];
+            }
         }
     }
 
@@ -191,10 +236,6 @@ final class TicketController extends AbstractController
             'type' => CommonITILActor::ASSIGN,
         ];
 
-        $originalSlas = [
-            'slas_id_tto' => (int) $ticket->fields['slas_id_tto'],
-            'slas_id_ttr' => (int) $ticket->fields['slas_id_ttr'],
-        ];
         $DB->beginTransaction();
         $committed = false;
         try {
@@ -215,21 +256,20 @@ final class TicketController extends AbstractController
             self::$transferTicket = $ticket;
             self::$keepTransferSla = (bool) $entityRights['keep_sla'];
             self::$transferCategory = $ticketCategory;
+            self::$originalTransferFields = $ticket->fields;
+            $expectedTransferFields = self::getTransferFields(self::$originalTransferFields);
             try {
                 $updated = $ticket->update($ticketUpdate);
             } finally {
                 self::$transferTicket = null;
+                self::$originalTransferFields = [];
             }
 
             if (!$updated || !$ticket->getFromDB($ticket->getId())) {
                 return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
             }
-            if ((int) $ticket->fields['itilcategories_id'] !== $ticketCategory) {
-                return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
-            }
-            foreach ($originalSlas as $field => $originalSla) {
-                $expectedSla = $entityRights['keep_sla'] ? $originalSla : 0;
-                if ((int) $ticket->fields[$field] !== $expectedSla) {
+            foreach ($expectedTransferFields as $field => $expectedValue) {
+                if ($ticket->fields[$field] != $expectedValue) {
                     return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
                 }
             }
