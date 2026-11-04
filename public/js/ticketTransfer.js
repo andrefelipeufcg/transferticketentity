@@ -1,23 +1,44 @@
+var tteEntityRequest = null;
+
 function tteGetEntityGroups() {
     const entityChoice = $('select[name=entity_choice]');
     const groupChoice = $('select[name=group_choice]');
     const groupChoiceValue = $('input[type=hidden][name=group_choice]');
-    $.ajax({
+    const categoryChoice = $('select[name=category_choice]');
+    const form = $('#tte_form');
+    const selectedEntity = entityChoice.val();
+    form.removeData('entity-right');
+    groupChoice.closest('.form-field').hide();
+    groupChoiceValue.val('0');
+    categoryChoice.closest('.form-field').hide();
+    categoryChoice.prop('disabled', true);
+    if (tteEntityRequest) {
+        tteEntityRequest.abort();
+        tteEntityRequest = null;
+    }
+    if (selectedEntity === '-1' || selectedEntity === null) {
+        return;
+    }
+
+    tteEntityRequest = $.ajax({
         url: CFG_GLPI.root_doc + '/plugins/transferticketentity/ajax/get_entities_rights.php',
         method: "GET",
         data: {
-            entity_id: entityChoice.val()
+            entity_id: selectedEntity
         },
         success: function (data) {
-            const form = $('#tte_form');
+            if (entityChoice.val() !== selectedEntity) {
+                return;
+            }
+            if (!data.rights || parseInt(data.rights.allow_transfer, 10) !== 1 || !Array.isArray(data.groups) || !Array.isArray(data.categories)) {
+                glpi_toast_error(__('Unable to load destination entity settings. Please try again.', 'transferticketentity'));
+                return;
+            }
             form.data('entity-right', data.rights);
 
             $(groupChoice).find('option[value!="0"]').remove();
             const groupChoiceFormField = groupChoice.closest('.form-field');
-            if (entityChoice.val() === '-1') {
-                groupChoiceFormField.hide();
-                groupChoiceValue.val('0');
-            } else {
+            {
                 data.groups.forEach((group) => {
                     $(groupChoice).append(new Option(group.name, group.id, false, false)).trigger('change');
                 });
@@ -36,11 +57,28 @@ function tteGetEntityGroups() {
                     groupChoiceValue.val('0');
                     groupChoiceFormField.hide();
                 }
-                if (data.rights.keep_category) {
-                    $('#tte_adv-msg').show();
-                } else {
-                    $('#tte_adv-msg').hide();
+                categoryChoice.find('option[value!="0"]').remove();
+                data.categories.forEach((category) => {
+                    categoryChoice.append(new Option(category.completename || category.name, category.id, false, false));
+                });
+                const currentCategoryId = String(parseInt(form.attr('data-current-category-id'), 10) || 0);
+                const defaultCategoryId = parseInt(data.rights.keep_category, 10) === 1
+                    ? '0'
+                    : String(parseInt(data.rights.itilcategories_id, 10) || 0);
+                const selectedCategoryId = defaultCategoryId !== '0' ? defaultCategoryId : currentCategoryId;
+                const categoryAvailable = selectedCategoryId === '0'
+                    || categoryChoice.find('option[value="' + selectedCategoryId + '"]').length > 0;
+                if (!categoryAvailable) {
+                    const categoryName = defaultCategoryId !== '0'
+                        ? '#' + selectedCategoryId
+                        : form.attr('data-current-category-name');
+                    const unavailable = new Option(categoryName + ' (' + __('Unavailable') + ')', selectedCategoryId, false, false);
+                    unavailable.disabled = true;
+                    categoryChoice.append(unavailable);
                 }
+                categoryChoice.prop('disabled', defaultCategoryId !== '0');
+                categoryChoice.val(selectedCategoryId).trigger('change');
+                categoryChoice.closest('.form-field').show();
                 const justificationText = $('#transferticketentity_dialog').find('#tte_justification');
                 const optionalText = ' (' + __('optional', 'transferticketentity') + ')'
                 if (data.rights.justification_transfer) {
@@ -51,6 +89,14 @@ function tteGetEntityGroups() {
                     justificationText.prev().text(justificationText.prev().text() + optionalText);
                 }
             }
+        },
+        error: function (xhr, status) {
+            if (status !== 'abort') {
+                glpi_toast_error(__('Unable to load destination entity settings. Please try again.', 'transferticketentity'));
+            }
+        },
+        complete: function () {
+            tteEntityRequest = null;
         }
     });
 }
@@ -63,8 +109,29 @@ $(function() {
         const entityChoice = $('select[name=entity_choice]');
         const groupChoice = $('select[name=group_choice]');
         const groupChoiceValue = $('input[type=hidden][name=group_choice]');
+        const categoryChoice = $('select[name=category_choice]');
         if (entityChoice.val() === '-1') {
             glpi_toast_error(__('Mandatory fields are not filled. Please correct: %s').replace("%s", __('Entity')));
+            return;
+        }
+        if (!entityRights) {
+            glpi_toast_error(__('Unable to load destination entity settings. Please try again.', 'transferticketentity'));
+            return;
+        }
+
+        const defaultCategoryId = parseInt(entityRights.keep_category, 10) === 1
+            ? '0'
+            : String(parseInt(entityRights.itilcategories_id, 10) || 0);
+        const currentCategoryId = String(parseInt(form.attr('data-current-category-id'), 10) || 0);
+        const categoryValue = categoryChoice.val();
+        if (defaultCategoryId !== '0' && (!categoryValue || categoryChoice.find('option:selected').prop('disabled'))) {
+            glpi_toast_error(__('The default category is not available in the destination entity. Contact an administrator.', 'transferticketentity'));
+            return;
+        }
+        const currentCategoryUnavailable = currentCategoryId !== '0'
+            && categoryChoice.find('option[value="' + currentCategoryId + '"]').prop('disabled');
+        if (defaultCategoryId === '0' && (!categoryValue || (currentCategoryUnavailable && categoryValue === '0'))) {
+            glpi_toast_error(__('The current category is not available in the destination entity. Select another category.', 'transferticketentity'));
             return;
         }
 

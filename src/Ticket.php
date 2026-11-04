@@ -37,6 +37,7 @@ use Dropdown;
 use Entity as GlpiEntity;
 use Glpi\Application\View\TemplateRenderer;
 use Html;
+use ITILCategory;
 use Session;
 use Ticket as GlpiTicket;
 
@@ -100,7 +101,7 @@ class Ticket extends CommonDBTM
             'LEFT JOIN' => ['glpi_plugin_transferticketentity_entities_settings AS TES' => ['FKEY' => ['E' => 'id', 'TES' => 'entities_id']]],
             'WHERE' => ['NOT' => ['E.id' => $ticket->getEntityID()]],
             'GROUPBY' => 'E.id',
-            'ORDER' => 'E.entities_id ASC',
+            'ORDER' => 'E.name ASC',
         ]);
 
         return iterator_to_array($result, false);
@@ -160,22 +161,37 @@ class Ticket extends CommonDBTM
             return;
         }
 
-        $entityDropdownValues = ['-1' => Dropdown::EMPTY_VALUE];
+        $entityGroups = [];
         foreach ($entitiesRights as $entityRight) {
             if ($entityRight['allow_transfer']) {
                 if ($entityRight['entities_id'] === null) {
-                    $entityDropdownValues[__('No previous entity', 'transferticketentity')][$entityRight['id']] = $entityRight['name'];
+                    $entityGroups[__('No previous entity', 'transferticketentity')][$entityRight['id']] = $entityRight['name'];
                 } else {
                     $searchParentEntityName = self::searchParentEntityName($entityRight['entities_id']);
-                    $entityDropdownValues[$searchParentEntityName][$entityRight['id']] = $entityRight['name'];
+                    $entityGroups[$searchParentEntityName][$entityRight['id']] = $entityRight['name'];
                 }
             }
         }
+        ksort($entityGroups, SORT_NATURAL | SORT_FLAG_CASE);
+        $entityDropdownValues = ['-1' => Dropdown::EMPTY_VALUE] + $entityGroups;
 
-        TemplateRenderer::getInstance()->display('@transferticketentity/ticket.html.twig', [
+        $category = new ITILCategory();
+        $categoryId = (int) $ticket->fields['itilcategories_id'];
+        $currentCategoryName = $categoryId > 0 && $category->getFromDB($categoryId)
+            ? ($category->fields['completename'] ?: $category->fields['name'])
+            : ($categoryId > 0 ? '#' . $categoryId : '');
+
+        $scriptVersion = hash_file('sha256', dirname(__DIR__) . '/public/js/ticketTransfer.js');
+        if ($scriptVersion === false) {
+            throw new \RuntimeException('Unable to read the ticket transfer script.');
+        }
+
+        TemplateRenderer::getInstance()->display('@transferticketentity/ticket_transfer.html.twig', [
             'item' => $ticket,
             'form_path' => self::getFormURL(),
             'entityDropdownValues' => $entityDropdownValues,
+            'currentCategoryName' => $currentCategoryName,
+            'ticketTransferScriptVersion' => $scriptVersion,
             'canedit' => true,
         ]);
     }

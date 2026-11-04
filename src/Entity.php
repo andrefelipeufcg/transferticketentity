@@ -38,6 +38,7 @@ use Entity as GlpiEntity;
 use Glpi\Application\View\TemplateRenderer;
 use Group;
 use Html;
+use ITILCategory;
 use Session;
 
 class Entity extends CommonDBTM
@@ -181,6 +182,23 @@ class Entity extends CommonDBTM
             'ORDER' => 'name',
         ];
         $criteria = array_merge_recursive($criteria, getEntitiesRestrictCriteria(Group::getTable(), '', $entity_id, true));
+
+        return iterator_to_array($DB->request($criteria), false);
+    }
+
+    /**
+     * Categories available in the entity, including recursive ancestor categories.
+     */
+    public static function getEntityCategories(int $entity_id): array
+    {
+        global $DB;
+
+        $criteria = [
+            'SELECT' => ['id', 'name', 'completename'],
+            'FROM' => ITILCategory::getTable(),
+            'ORDER' => 'completename',
+        ];
+        $criteria = array_merge_recursive($criteria, getEntitiesRestrictCriteria(ITILCategory::getTable(), '', $entity_id, true));
 
         return iterator_to_array($DB->request($criteria), false);
     }

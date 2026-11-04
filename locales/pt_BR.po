@@ -117,6 +117,34 @@ msgstr "Transferência cancelada"
 msgid "Unauthorized transfer on closed ticket."
 msgstr "Não é possível transferir um ticket cujo status é fechado."
 
+#: inc/ticket.class.php:239 src/Ticket.php src/Controller/TicketController.php
+msgid "No entity available found, transfer impossible."
+msgstr "Nenhuma entidade disponível encontrada, transferência impossível."
+
+#: inc/ticket.class.php:342 src/Controller/TicketController.php
+msgid "No group found with « Assigned to » right while a group is required. Transfer impossible."
+msgstr "Nenhum grupo com permissão « Atribuído a » foi encontrado, embora um grupo seja obrigatório. Transferência impossível."
+
+#: inc/ticket.class.php:303 src/Ticket.php
+msgid "You don't have right to update tickets. Please contact your administrator."
+msgstr "Você não tem permissão para atualizar chamados. Entre em contato com seu administrador."
+
+#: src/Ticket.php
+msgid "No previous entity"
+msgstr "Sem entidade anterior"
+
+#: inc/ticket.class.php:305 templates/ticket_transfer.html.twig
+msgid "None"
+msgstr "Nenhum"
+
+#: inc/ticket.class.php:405 public/js/ticketTransfer.js
+msgid "optional"
+msgstr "opcional"
+
+#: front/ticket.form.php:266 src/Controller/TicketController.php
+msgid "Category will be set to null but its configured as mandatory in GLPIs template, please contact your administrator."
+msgstr "A categoria será definida como nula, mas está configurada como obrigatória no modelo do GLPI. Entre em contato com seu administrador."
+
 #: inc/ticket.class.php:436 inc/ticket.php:357
 msgid "Please explain your transfer"
 msgstr "Por favor apresentar mais dados sobre sua transferência"
@@ -167,6 +195,18 @@ msgstr "Não foi possível transferir o chamado."
 #: templates/entity.html.twig
 msgid "Keep category after transfer"
 msgstr "Manter a categoria após a transferência"
+
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The current category is not available in the destination entity. Select another category."
+msgstr "A categoria atual não está disponível na entidade de destino. Selecione outra categoria."
+
+#: public/js/ticketTransfer.js src/Controller/TicketController.php
+msgid "The default category is not available in the destination entity. Contact an administrator."
+msgstr "A categoria padrão não está disponível na entidade de destino. Entre em contato com um administrador."
+
+#: public/js/ticketTransfer.js
+msgid "Unable to load destination entity settings. Please try again."
+msgstr "Não foi possível carregar as configurações da entidade de destino. Tente novamente."
 
 #: templates/entity.html.twig
 msgid "Default category"

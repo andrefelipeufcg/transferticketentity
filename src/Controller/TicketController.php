@@ -11,7 +11,6 @@ use GlpiPlugin\Transferticketentity\Entity;
 use Group;
 use Group_Ticket;
 use Html;
-use ITILCategory;
 use Planning;
 use Session;
 use SlaLevel_Ticket;
@@ -28,6 +27,7 @@ final class TicketController extends AbstractController
 {
     private static ?GlpiTicket $transferTicket = null;
     private static bool $keepTransferSla = true;
+    private static int $transferCategory = 0;
 
     public static function applyTransferSlaSetting(GlpiTicket $ticket): void
     {
@@ -35,6 +35,7 @@ final class TicketController extends AbstractController
             return;
         }
 
+        $ticket->input['itilcategories_id'] = self::$transferCategory;
         // GLPI strips SLA input without SLM rights and business rules can change it.
         foreach (['slas_id_tto', 'slas_id_ttr'] as $field) {
             $ticket->input[$field] = self::$keepTransferSla ? $ticket->fields[$field] : 0;
@@ -57,6 +58,7 @@ final class TicketController extends AbstractController
         if ($entity_id >= 0) {
             $response['rights'] = self::getEntityRights($entity_id);
             $response['groups'] = $response['rights']['allow_transfer'] ? self::getEntityGroups($entity_id) : [];
+            $response['categories'] = $response['rights']['allow_transfer'] ? Entity::getEntityCategories($entity_id) : [];
         }
 
         return new JsonResponse($response);
@@ -160,16 +162,21 @@ final class TicketController extends AbstractController
             'status' => $group ? CommonITILObject::ASSIGNED : CommonITILObject::INCOMING,
         ];
 
-        $ticketCategory = $ticket->fields['itilcategories_id'];
-        if ($entityRights['keep_category']) {
-            if (!self::checkExistingCategory($ticket, $entity)) {
-                $ticketCategory = 0;
-                $ticketUpdate['itilcategories_id'] = $ticketCategory;
-            }
-        } else {
-            $ticketCategory = (int) $entityRights['itilcategories_id'];
-            $ticketUpdate['itilcategories_id'] = $ticketCategory;
+        $categoryIds = array_map('intval', array_column(Entity::getEntityCategories($entity_id), 'id'));
+        $defaultCategory = !$entityRights['keep_category'] ? (int) $entityRights['itilcategories_id'] : 0;
+        if ($defaultCategory > 0 && !in_array($defaultCategory, $categoryIds, true)) {
+            return self::redirectWithError(__("The default category is not available in the destination entity. Contact an administrator.", "transferticketentity"));
         }
+        $ticketCategory = $defaultCategory > 0 ? $defaultCategory : $request->request->getInt('category_choice', -1);
+        $currentCategory = (int) $ticket->fields['itilcategories_id'];
+        if (
+            $ticketCategory < 0
+            || ($ticketCategory > 0 && !in_array($ticketCategory, $categoryIds, true))
+            || ($defaultCategory === 0 && $ticketCategory === 0 && $currentCategory > 0 && !in_array($currentCategory, $categoryIds, true))
+        ) {
+            return self::redirectWithError(__("The current category is not available in the destination entity. Select another category.", "transferticketentity"));
+        }
+        $ticketUpdate['itilcategories_id'] = $ticketCategory;
 
         // If category is mandatory with GLPIs template and category will be null
         if ($ticketCategory == 0 && self::checkMandatoryCategory($ticket, $entity)) {
@@ -207,6 +214,7 @@ final class TicketController extends AbstractController
 
             self::$transferTicket = $ticket;
             self::$keepTransferSla = (bool) $entityRights['keep_sla'];
+            self::$transferCategory = $ticketCategory;
             try {
                 $updated = $ticket->update($ticketUpdate);
             } finally {
@@ -214,6 +222,9 @@ final class TicketController extends AbstractController
             }
 
             if (!$updated || !$ticket->getFromDB($ticket->getId())) {
+                return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+            }
+            if ((int) $ticket->fields['itilcategories_id'] !== $ticketCategory) {
                 return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
             }
             foreach ($originalSlas as $field => $originalSla) {
@@ -275,23 +286,6 @@ final class TicketController extends AbstractController
                 $request->getBasePath()
             )
         );
-    }
-
-    /**
-     * Check if category exist in target entity
-     */
-    private static function checkExistingCategory(GlpiTicket $ticket, GlpiEntity $entity): bool
-    {
-        global $DB;
-
-        $criteria = [
-            'SELECT' => ['id'],
-            'FROM' => ITILCategory::getTable(),
-        ];
-        $criteria = array_merge_recursive($criteria, getEntitiesRestrictCriteria(ITILCategory::getTable(), '', $entity->getId(), true));
-        $categoryIdsInTargetEntity = array_column(iterator_to_array($DB->request($criteria), false), 'id');
-
-        return in_array($ticket->fields['itilcategories_id'], $categoryIdsInTargetEntity);
     }
 
     /**
