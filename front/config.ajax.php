@@ -63,6 +63,7 @@ function tteSaveEntitySettings(): void
     $entityIds = tteValidatedIds($_POST['entities_id'] ?? [], '', 0, true);
     $allowTransfer = tteReadBoolean('allow_transfer');
     $groupRequired = $allowTransfer && tteReadBoolean('allow_entity_only_transfer');
+    $keepSla = $allowTransfer && tteReadBoolean('keep_sla');
     $justification = $allowTransfer && tteReadBoolean('justification_transfer');
     $keepCategory = $allowTransfer && tteReadBoolean('keep_category');
     $submittedGroupId = tteReadNonNegativeId($_POST['groups_id'] ?? '0');
@@ -115,6 +116,7 @@ function tteSaveEntitySettings(): void
                 'allow_entity_only_transfer' => $groupRequired,
                 'justification_transfer' => $justification,
                 'allow_transfer' => $allowTransfer,
+                'keep_sla' => $keepSla,
                 'keep_category' => $keepCategory,
                 'itilcategories_id' => $categoryId > 0 ? $categoryId : null,
                 'groups_id' => $groupsId,
@@ -130,6 +132,7 @@ function tteSaveEntitySettings(): void
             [
                 'allow_transfer' => 0,
                 'allow_entity_only_transfer' => 0,
+                'keep_sla' => 0,
                 'justification_transfer' => 0,
                 'keep_category' => 0,
                 'itilcategories_id' => null,
@@ -148,6 +151,7 @@ function tteSaveEntitySettings(): void
         'allow_transfer' => (int) $allowTransfer,
         'allow_entity_only_transfer' => (int) $groupRequired,
         'groups_id' => $groupsId,
+        'keep_sla' => (int) $keepSla,
         'justification_transfer' => (int) $justification,
         'keep_category' => (int) $keepCategory,
         'itilcategories_id' => $categoryId,

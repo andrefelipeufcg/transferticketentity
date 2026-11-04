@@ -14,6 +14,8 @@ use Html;
 use ITILCategory;
 use Planning;
 use Session;
+use SlaLevel_Ticket;
+use SLM;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +26,27 @@ use TicketTask;
 
 final class TicketController extends AbstractController
 {
+    private static ?GlpiTicket $transferTicket = null;
+    private static bool $keepTransferSla = true;
+
+    public static function applyTransferSlaSetting(GlpiTicket $ticket): void
+    {
+        if ($ticket !== self::$transferTicket || !is_array($ticket->input)) {
+            return;
+        }
+
+        // GLPI strips SLA input without SLM rights and business rules can change it.
+        foreach (['slas_id_tto', 'slas_id_ttr'] as $field) {
+            $ticket->input[$field] = self::$keepTransferSla ? $ticket->fields[$field] : 0;
+        }
+        foreach (['time_to_own', 'time_to_resolve'] as $field) {
+            $ticket->input[$field] = $ticket->fields[$field];
+        }
+        foreach (['slalevels_id_ttr', 'sla_waiting_duration'] as $field) {
+            $ticket->input[$field] = self::$keepTransferSla ? $ticket->fields[$field] : 0;
+        }
+    }
+
     #[Route("/ajax/get_entities_rights.php", name: "transferticketentity_entity_rights")]
     public function getEntity(Request $request): Response
     {
@@ -44,7 +67,7 @@ final class TicketController extends AbstractController
         global $DB;
 
         $rights = $DB->request([
-            'SELECT' => ['entities_id', 'allow_entity_only_transfer', 'justification_transfer', 'allow_transfer', 'keep_category', 'itilcategories_id', 'groups_id'],
+            'SELECT' => ['entities_id', 'allow_entity_only_transfer', 'justification_transfer', 'allow_transfer', 'keep_category', 'itilcategories_id', 'groups_id', 'keep_sla'],
             'FROM' => 'glpi_plugin_transferticketentity_entities_settings',
             'WHERE' => ['entities_id' => $entity_id],
         ])->current();
@@ -57,6 +80,7 @@ final class TicketController extends AbstractController
             'keep_category' => 0,
             'itilcategories_id' => null,
             'groups_id' => 0,
+            'keep_sla' => 1,
         ];
     }
 
@@ -75,6 +99,8 @@ final class TicketController extends AbstractController
     #[Route("/front/ticket.form.php", name: "transferticketentity_ticket")]
     public function transferTicket(Request $request): Response
     {
+        global $DB;
+
         Session::checkRight('plugin_transferticketentity_use', ALLSTANDARDRIGHT);
 
         $ticket = new GlpiTicket();
@@ -158,19 +184,57 @@ final class TicketController extends AbstractController
             'type' => CommonITILActor::ASSIGN,
         ];
 
-        // Remove the link with the current users
-        $ticketUser = new Ticket_User();
-        foreach (array_keys($ticketUser->find($assignCriteria)) as $id) {
-            $ticketUser->delete(['id' => $id]);
-        }
+        $originalSlas = [
+            'slas_id_tto' => (int) $ticket->fields['slas_id_tto'],
+            'slas_id_ttr' => (int) $ticket->fields['slas_id_ttr'],
+        ];
+        $DB->beginTransaction();
+        $committed = false;
+        try {
+            $ticketUser = new Ticket_User();
+            foreach (array_keys($ticketUser->find($assignCriteria)) as $id) {
+                if (!$ticketUser->delete(['id' => $id])) {
+                    return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                }
+            }
 
-        // Remove the link with the current groups
-        $groupTicket = new Group_Ticket();
-        foreach (array_keys($groupTicket->find($assignCriteria)) as $id) {
-            $groupTicket->delete(['id' => $id]);
-        }
+            $groupTicket = new Group_Ticket();
+            foreach (array_keys($groupTicket->find($assignCriteria)) as $id) {
+                if (!$groupTicket->delete(['id' => $id])) {
+                    return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                }
+            }
 
-        $ticket->update($ticketUpdate);
+            self::$transferTicket = $ticket;
+            self::$keepTransferSla = (bool) $entityRights['keep_sla'];
+            try {
+                $updated = $ticket->update($ticketUpdate);
+            } finally {
+                self::$transferTicket = null;
+            }
+
+            if (!$updated || !$ticket->getFromDB($ticket->getId())) {
+                return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+            }
+            foreach ($originalSlas as $field => $originalSla) {
+                $expectedSla = $entityRights['keep_sla'] ? $originalSla : 0;
+                if ((int) $ticket->fields[$field] !== $expectedSla) {
+                    return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                }
+            }
+
+            if (!$entityRights['keep_sla']) {
+                $slaLevelTicket = new SlaLevel_Ticket();
+                $slaLevelTicket->deleteForTicket($ticket->getId(), SLM::TTO);
+                $slaLevelTicket->deleteForTicket($ticket->getId(), SLM::TTR);
+            }
+            $DB->commit();
+            $committed = true;
+        } finally {
+            if (!$committed) {
+                $DB->rollBack();
+            }
+        }
 
         if ($group) {
             $groupTicket->add($assignCriteria + ['groups_id' => $group->getId()]);

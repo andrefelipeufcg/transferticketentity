@@ -13,6 +13,10 @@
                 'display_emptychoice': true,
                 'helper': __('During transfer, the ticket will always be assigned to this group, and the user will not be able to change it.', 'transferticketentity')
             }) }}
+            {{ fields.dropdownYesNo('keep_sla', last.keep_sla, __('Keep SLA after transfer', 'transferticketentity'), {
+                'full_width': true,
+                'helper': __('If enabled, the SLA assigned to the ticket will be preserved after the transfer. If disabled, the SLA will be removed.', 'transferticketentity')
+            }) }}
             {{ fields.dropdownYesNo('justification_transfer', last.justification_transfer, __('Justification required', 'transferticketentity'), {'full_width': true}) }}
             {{ fields.dropdownYesNo('keep_category', last.keep_category, __('Keep category after transfer', 'transferticketentity'), {'full_width': true}) }}
             {{ fields.dropdownArrayField('itilcategories_id', last.itilcategories_id, categories, __('Default category', 'transferticketentity'), {

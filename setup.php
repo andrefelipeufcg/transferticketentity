@@ -4,7 +4,7 @@ use GlpiPlugin\Transferticketentity\Entity as TransferTicketEntityEntity;
 use GlpiPlugin\Transferticketentity\Profile as TransferTicketEntityProfile;
 use GlpiPlugin\Transferticketentity\Ticket as TransferTicketEntityTicket;
 
-define('PLUGIN_TRANSFERTICKETENTITY_VERSION', '1.3.2');
+define('PLUGIN_TRANSFERTICKETENTITY_VERSION', '1.4.0');
 define('PLUGIN_TRANSFERTICKETENTITY_MIN_GLPI', '11.0.0');
 define('PLUGIN_TRANSFERTICKETENTITY_MAX_GLPI', '12.0.99');
 
@@ -19,6 +19,10 @@ function plugin_init_transferticketentity()
 
     $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_ADD]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
     $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::ITEM_UPDATE]['transferticketentity']['ProfileRight'] = 'plugin_transferticketentity_profile_right_saved';
+    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::POST_PREPAREUPDATE]['transferticketentity']['Ticket'] = [
+        \GlpiPlugin\Transferticketentity\Controller\TicketController::class,
+        'applyTransferSlaSetting',
+    ];
 
     $PLUGIN_HOOKS['csrf_compliant']['transferticketentity'] = true;
     $PLUGIN_HOOKS['config_page']['transferticketentity'] = 'front/config.form.php';

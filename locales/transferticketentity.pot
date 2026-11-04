@@ -145,6 +145,17 @@ msgstr ""
 msgid "Justification required"
 msgstr ""
 
+#: templates/entity.html.twig templates/settings_entities.html.twig
+msgid "Keep SLA after transfer"
+msgstr ""
+
+msgid "If enabled, the SLA assigned to the ticket will be preserved after the transfer. If disabled, the SLA will be removed."
+msgstr ""
+
+#: src/Controller/TicketController.php
+msgid "Unable to transfer the ticket."
+msgstr ""
+
 #: inc/entity.class.php:137
 msgid "Allow Transfer function"
 msgstr ""
