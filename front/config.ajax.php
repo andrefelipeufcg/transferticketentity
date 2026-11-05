@@ -258,7 +258,7 @@ function tteSaveGroupMemberships(): void
     if (!$targetGroup->getFromDB($targetGroupId)) {
         throw new InvalidArgumentException(__('The configured assigned group no longer exists. Update it in the Entities tab.', 'transferticketentity'));
     }
-    if (!$targetGroup->can($targetGroupId, UPDATE)) {
+    if (!tteCanUpdateGroup($targetGroup)) {
         throw new InvalidArgumentException(__('You do not have permission to update the configured assigned group.', 'transferticketentity'));
     }
 
@@ -337,6 +337,26 @@ function tteSaveGroupMemberships(): void
     Settings::rememberApplied('groups', ['groups' => $groupIds]);
     $DB->commit();
     $transactionStarted = false;
+}
+
+/**
+ * Check if the current user can update a group without triggering
+ * GLPI 12's reauthentication requirement for the Group item type.
+ *
+ * Replicates the authorization checks from CommonDBTM::can() (global right +
+ * entity access) but skips the reauthentication gate that was introduced in
+ * GLPI 12 for Group and Group_User.  The plugin only reads group membership
+ * and never modifies the group record itself, so the reauth gate is
+ * unnecessarily strict here.
+ *
+ * Compatible with GLPI 11 (where the issue does not exist).
+ */
+function tteCanUpdateGroup(Group $group): bool
+{
+    if (!Session::haveRight(Group::$rightname, UPDATE)) {
+        return false;
+    }
+    return Session::haveAccessToEntity($group->getEntityID(), $group->isRecursive());
 }
 
 function tteValidatedIds($input, string $emptyMessage, int $minimum = 1, bool $allowEmpty = false): array
