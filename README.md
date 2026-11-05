@@ -44,6 +44,8 @@ Administradores com permissão para atualizar a configuração também podem uti
 
 Na aba **Grupos**, a caixa ao lado de cada entidade permite marcar ou desmarcar todos os seus grupos. Ela fica marcada quando todos os grupos disponíveis da entidade estão selecionados.
 
+Use a seta ao lado de cada entidade para expandir ou recolher seus grupos sem alterar as seleções. Ao filtrar, as entidades com resultados são expandidas; ao limpar o filtro, o estado anterior é restaurado.
+
 Use o filtro acima de cada lista para localizar itens sem alterar suas seleções. Os botões de seleção em massa e a caixa de seleção da entidade continuam afetando todos os itens correspondentes, inclusive os ocultos pelo filtro.
 
 O carregamento das abas e o salvamento exibem um indicador de progresso.
@@ -101,6 +103,8 @@ Les administrateurs ayant le droit de mise à jour de la configuration peuvent a
 - **Groupes** : ajoute au groupe attribué par défaut les utilisateurs des groupes sélectionnés. Les utilisateurs déjà membres ne sont pas dupliqués. Les utilisateurs appartenant à des groupes désélectionnés sont retirés du groupe attribué, sauf s'ils appartiennent également à un groupe sélectionné. Le groupe attribué par défaut ne peut pas être sélectionné comme groupe source et est défini dans l'onglet Entités.
 
 Dans l'onglet **Groupes**, la case à côté de chaque entité permet de sélectionner ou désélectionner tous ses groupes. Elle est cochée lorsque tous les groupes disponibles de l'entité sont sélectionnés.
+
+La flèche à côté de chaque entité permet de déplier ou replier ses groupes sans modifier leur sélection. Le filtre déplie les entités contenant des résultats, puis restaure leur état lorsque le filtre est effacé.
 
 Le filtre au-dessus de chaque liste permet de trouver des éléments sans modifier leur sélection. Les actions de sélection en masse et la case de l'entité s'appliquent aussi aux éléments masqués par le filtre.
 
@@ -161,6 +165,8 @@ Administrators with permission to update the configuration can also use the plug
 - **Groups**: adds users from the selected groups to the default assigned group. Existing memberships are not duplicated. Users belonging to deselected groups are removed from the assigned group unless they also belong to a selected group. The default assigned group cannot be selected as a source group and is configured in the Entities tab.
 
 In the **Groups** tab, the checkbox next to each entity selects or clears all of its groups. It is checked when all available groups in that entity are selected.
+
+Use the arrow next to an entity to expand or collapse its groups without changing selections. Filtering expands entities with matches; clearing the filter restores their previous state.
 
 Use the filter above each list to find items without changing their selections. Bulk actions and entity checkboxes still affect all corresponding items, including those hidden by the filter.
 

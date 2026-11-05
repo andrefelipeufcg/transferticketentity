@@ -91,6 +91,16 @@ $(function() {
         return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     }
 
+    function setGroupExpanded(entity, expanded) {
+        entity.find('[data-group-toggle]').attr('aria-expanded', String(expanded));
+        entity.find('[data-group-children]').prop('hidden', !expanded);
+    }
+
+    $(document).on('click', 'form[data-form="groups"] [data-group-toggle]', function() {
+        const entity = $(this).closest('[data-group-entity]');
+        setGroupExpanded(entity, $(this).attr('aria-expanded') !== 'true');
+    });
+
     $(document).on('input', '.tte-settings-form [data-list-filter]', function() {
         const form = $(this).closest('form');
         const terms = normalizeFilterText(this.value.trim()).split(/\s+/).filter(Boolean);
@@ -100,9 +110,14 @@ $(function() {
         };
 
         if (form.attr('data-form') === 'groups') {
+            const filtering = terms.length > 0;
+            const wasFiltering = form.data('tteFiltering') === true;
             form.find('[data-group-entity]').each(function() {
                 const entity = $(this);
                 const entityName = entity.find('[data-group-entity-label]').text();
+                if (filtering && !wasFiltering) {
+                    entity.data('tteExpandedBeforeFilter', entity.find('[data-group-toggle]').attr('aria-expanded') === 'true');
+                }
                 let hasMatches = false;
                 entity.find('[data-filter-item]').each(function() {
                     const item = $(this);
@@ -111,7 +126,14 @@ $(function() {
                     hasMatches = hasMatches || visible;
                 });
                 entity.toggleClass('d-none', !hasMatches);
+                if (filtering && hasMatches) {
+                    setGroupExpanded(entity, true);
+                } else if (!filtering && wasFiltering) {
+                    setGroupExpanded(entity, entity.data('tteExpandedBeforeFilter') === true);
+                    entity.removeData('tteExpandedBeforeFilter');
+                }
             });
+            form.data('tteFiltering', filtering);
         } else {
             form.find('.tte-settings-select-list [data-filter-item]').each(function() {
                 const item = $(this);

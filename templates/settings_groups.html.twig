@@ -20,6 +20,7 @@
                 <div class="tte-settings-list-container">
                     {% include '@transferticketentity/settings_list_filter.html.twig' %}
                     <div class="tte-settings-select-list">
+                        {% set groupTreeId = random() %}
                         {% for entity, entityGroups in groups %}
                             {% set availableCount = 0 %}
                             {% set selectedCount = 0 %}
@@ -33,12 +34,21 @@
                             {% endfor %}
                             {% if availableCount > 0 %}
                                 <div data-group-entity>
-                                    <label data-group-entity-label><strong><input type="checkbox" data-select-entity-groups{% if selectedCount == availableCount %} checked{% endif %}> {{ entity }}</strong></label>
-                                    {% for id, name in entityGroups %}
-                                        {% if id != assigned_group_id %}
-                                            <label class="tte-settings-group-option" data-filter-item><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
-                                        {% endif %}
-                                    {% endfor %}
+                                    <div class="tte-settings-group-heading">
+                                        {% set entityCheckboxId = 'tte-group-entity-' ~ groupTreeId ~ '-' ~ loop.index %}
+                                        <input type="checkbox" id="{{ entityCheckboxId }}" data-select-entity-groups{% if selectedCount == availableCount %} checked{% endif %}>
+                                        <button type="button" class="tte-settings-group-toggle" data-group-toggle aria-expanded="true" aria-label="{{ entity }}">
+                                            <i class="ti ti-chevron-right" aria-hidden="true"></i>
+                                        </button>
+                                        <label for="{{ entityCheckboxId }}" data-group-entity-label><strong>{{ entity }}</strong></label>
+                                    </div>
+                                    <div data-group-children>
+                                        {% for id, name in entityGroups %}
+                                            {% if id != assigned_group_id %}
+                                                <label class="tte-settings-group-option" data-filter-item><input type="checkbox" name="groups_id[]" value="{{ id }}"{% if id in last.groups %} checked{% endif %}> {{ name }}</label>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             {% endif %}
                         {% endfor %}
