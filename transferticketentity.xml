@@ -7,10 +7,12 @@
          <short>
             <fr>Ce plugin permet aux profils autorisés d'envoyer les tickets à une entité où ils n'ont aucun droit d'accès.</fr>
             <en>This plugin allows authorized profiles to send tickets to an entity where they have no access rights.</en>
+            <pt_BR>Este plugin permite que perfis autorizados enviem chamados para uma entidade à qual não têm acesso.</pt_BR>
          </short>
          <long>
             <fr>Ce plugin permet, pour les profils autorisés, de transférer des tickets d'une entité à une autre sur laquelle ils n'ont pas les accès. Il s'adresse aux organisations qui ont configurés, dans GLPI, leurs périmètres d'activités par entité (DRH, Comptabilité, SI, ...). L'intérêt étant de pouvoir transférer un ticket entre techniciens "GLPI" d'entités différentes et de continuer à assurer la confidentialité des données entre entités.</fr>
             <en>This plugin enables authorized profiles to transfer tickets from one entity to another to which they do not have access. It is designed for organizations that have configured their GLPI activity perimeters by entity (HR, Accounting, IS, etc.). The aim is to be able to transfer a ticket between "GLPI" technicians from different entities, and to continue to ensure the confidentiality of data between entities.</en>
+            <pt_BR>Este plugin permite que perfis autorizados transfiram chamados de uma entidade para outra à qual não têm acesso. Ele é destinado a organizações que configuraram no GLPI seus perímetros de atuação por entidade (Recursos Humanos, Contabilidade, Tecnologia da Informação etc.). O objetivo é permitir a transferência de chamados entre técnicos do GLPI de entidades diferentes, preservando a confidencialidade das informações entre as entidades.</pt_BR>
          </long>
       </description>
       <homepage>https://github.com/departement-maine-et-loire/transferticketentity</homepage>
@@ -54,10 +56,19 @@
       <tags>
          <fr>
             <tag>Ticket</tag>
+            <tag>Transfert de tickets</tag>
+            <tag>Entité</tag>
          </fr>
          <en>
             <tag>Ticket</tag>
+            <tag>Ticket transfer</tag>
+            <tag>Entity</tag>
          </en>
+         <pt_BR>
+            <tag>Chamado</tag>
+            <tag>Transferência de chamados</tag>
+            <tag>Entidade</tag>
+         </pt_BR>
       </tags>
       <screenshots>
          <screenshot>https://raw.githubusercontent.com/departement-maine-et-loire/transferticketentity/master/img/gifs/TransferTicketEntity_EN.gif</screenshot>
