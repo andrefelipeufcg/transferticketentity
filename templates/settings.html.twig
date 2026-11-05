@@ -71,6 +71,30 @@
     .tte-settings-select-list .tte-settings-group-option {
         margin-inline-start: 1.5rem;
     }
+    .tte-settings-group-heading {
+        align-items: center;
+        display: flex;
+        gap: 4px;
+        margin-top: 8px;
+    }
+    .tte-settings-group-heading label {
+        margin: 0;
+    }
+    .tte-settings-select-list .tte-settings-group-heading strong {
+        margin: 0;
+    }
+    .tte-settings-group-toggle {
+        background: none;
+        border: 0;
+        color: inherit;
+        padding: 2px;
+    }
+    .tte-settings-group-toggle i {
+        display: inline-block;
+    }
+    .tte-settings-group-toggle[aria-expanded="true"] i {
+        transform: rotate(90deg);
+    }
     .tte-settings-select-list strong {
         display: block;
         margin-top: 8px;
@@ -93,4 +117,4 @@
     }
     @keyframes tte-spin { to { transform: rotate(360deg); } }
 </style>
-{{ call('Html::script', ['/plugins/transferticketentity/js/pluginSettings.js']) | raw }}
+{{ call('Html::script', ['/plugins/transferticketentity/js/pluginSettings.js', {'version': pluginSettingsScriptVersion}]) | raw }}
