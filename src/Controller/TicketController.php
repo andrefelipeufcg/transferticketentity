@@ -268,6 +268,38 @@ final class TicketController extends AbstractController
             if (!$updated || !$ticket->getFromDB($ticket->getId())) {
                 return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
             }
+            if ((int) $ticket->fields['itilcategories_id'] !== $ticketCategory) {
+                return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+            }
+
+            if ($group) {
+                $assignedGroups = $groupTicket->find($assignCriteria);
+                $defaultGroupAssigned = false;
+                foreach ($assignedGroups as $assignedGroup) {
+                    if ((int) $assignedGroup['groups_id'] === $group_id) {
+                        $defaultGroupAssigned = true;
+                        break;
+                    }
+                }
+                if (!$defaultGroupAssigned && !$groupTicket->add($assignCriteria + ['groups_id' => $group_id])) {
+                    return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                }
+
+                foreach ($groupTicket->find($assignCriteria) as $id => $assignedGroup) {
+                    if ((int) $assignedGroup['groups_id'] !== $group_id && !$groupTicket->delete(['id' => $id])) {
+                        return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                    }
+                }
+
+                $assignedGroups = $groupTicket->find($assignCriteria);
+                if (count($assignedGroups) !== 1 || (int) reset($assignedGroups)['groups_id'] !== $group_id) {
+                    return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                }
+                if (!$ticket->getFromDB($ticket->getId())) {
+                    return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+                }
+            }
+
             foreach ($expectedTransferFields as $field => $expectedValue) {
                 if ($ticket->fields[$field] != $expectedValue) {
                     return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
@@ -285,10 +317,6 @@ final class TicketController extends AbstractController
             if (!$committed) {
                 $DB->rollBack();
             }
-        }
-
-        if ($group) {
-            $groupTicket->add($assignCriteria + ['groups_id' => $group->getId()]);
         }
 
         $justificationText = '';

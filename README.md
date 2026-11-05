@@ -16,6 +16,7 @@ Para configurar os pré-requisitos da transferência entre entidades:
 - **Permitir transferência de chamados**: define se a transferência é permitida para a entidade e os grupos associados.
 - **Exigir atribuição a um grupo**:
   - Define se o chamado transferido deve ser obrigatoriamente atribuído a um grupo.
+  - Quando ativado, somente o grupo padrão configurado permanece como grupo técnico após a transferência, mesmo que regras adicionem outros grupos durante a atualização.
   - Quando desativado, a opção "Nenhum" ficará disponível na lista de grupos de destino.
   - Se o chamado for enviado para uma entidade sem grupo, ele será considerado "Novo".
 - **Exigir justificativa para transferência**:
@@ -76,6 +77,7 @@ Pour configurer les prérequis du transfert d'entité :
 - Autoriser la fonction Transfert : définit si le transfert est autorisé vers l'entité et les groupes associés.
 - Groupe à assigner obligatoire pour effectuer un transfert :
 	- Définit si le ticket transféré doit être obligatoirement assigné à un groupe.
+	- Si oui, seul le groupe par défaut configuré reste assigné au ticket après le transfert, même si des règles ajoutent d'autres groupes pendant la mise à jour.
 	- Si non, le choix "aucun" apparaîtra dans la liste du groupe cible et sera à sélectionner
 	- Si le ticket est envoyé dans une entité sans groupe, il sera considéré comme "nouveau"
 - Justification obligatoire pour effectuer un transfert
@@ -135,6 +137,7 @@ To configure entity transfer prerequisites :
 - **Allow ticket transfers**: defines whether transfers are allowed to the entity and its associated groups.
 - **Require assignment to a group**:
     - Defines whether the transferred ticket must be assigned to a group.
+    - When enabled, only the configured default group remains assigned after transfer, even if rules add other groups during the update.
     - If not, the choice "none" will appear in the target group list and must be selected.
     - If the ticket is sent to an entity without a group, it will be considered "new"
 - Justification required to make a transfer :
