@@ -4,7 +4,7 @@ use GlpiPlugin\Transferticketentity\Entity as TransferTicketEntityEntity;
 use GlpiPlugin\Transferticketentity\Profile as TransferTicketEntityProfile;
 use GlpiPlugin\Transferticketentity\Ticket as TransferTicketEntityTicket;
 
-define('PLUGIN_TRANSFERTICKETENTITY_VERSION', '1.4.0');
+define('PLUGIN_TRANSFERTICKETENTITY_VERSION', '1.4.1');
 define('PLUGIN_TRANSFERTICKETENTITY_MIN_GLPI', '11.0.0');
 define('PLUGIN_TRANSFERTICKETENTITY_MAX_GLPI', '12.0.99');
 
