@@ -24,9 +24,13 @@ msgstr ""
 "1000000 == 0 ? 1 : 2;\n"
 "X-Generator: Poedit 3.3.2\n"
 
+#: src/Controller/TicketController.php
+msgid "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s"
+msgstr "%1$s (ID do utilizador %2$d) transferiu o pedido %3$d de %4$s (ID da entidade %5$d) para %6$s (ID da entidade %7$d). Justificação: %8$s"
+
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
-msgstr "Transferência de Entidade do Ticket"
+msgstr "Transferência de chamado entre setores (entidades)"
 
 #: inc/profile.class.php:74
 msgid "Change rights"
@@ -57,7 +61,7 @@ msgstr ""
 
 #: inc/ticket.class.php:216
 msgid "Select ticket entity to transfer"
-msgstr "Selecione a entidade para transferir o ticket"
+msgstr "Selecione o setor (entidade) para transferir o chamado"
 
 #: inc/ticket.class.php:218
 msgid "Choose your entity"

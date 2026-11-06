@@ -50,6 +50,12 @@ Use o filtro acima de cada lista para localizar itens sem alterar suas seleçõe
 
 O carregamento das abas e o salvamento exibem um indicador de progresso.
 
+## Log de transferências
+
+Após cada transferência concluída, o plugin tenta registrar um evento e uma entrada no arquivo **transferticketentity.log**, consultáveis em **Administração > Logs**, com o usuário, o chamado, as entidades de origem e destino e a justificativa informada. Ambos são registrados independentemente do nível de log ou da opção de logs em arquivo do GLPI. O evento segue a política de retenção dos eventos do GLPI; o arquivo segue a gestão de arquivos de log do GLPI. O acesso aos logs pode revelar justificativas a administradores que não tenham acesso ao chamado.
+
+O evento e o arquivo são gravados após a confirmação da transferência, sem garantia transacional. Falhas são registradas no log de erros do servidor, sem aviso ao usuário e sem desfazer a transferência. Se a mensagem exceder o limite do evento no banco, o evento não é gravado, mas o registro no arquivo continua sendo tentado. O arquivo é criado na primeira gravação bem-sucedida, no diretório de logs do GLPI. O registro direto do evento não dispara o webhook de novo evento do GLPI.
+
 ## Compatibilidade
 
 Este plugin foi desenvolvido e testado para uso com o GLPI 11.
@@ -112,6 +118,12 @@ Les paramètres sont conservés et rechargés lors de la réouverture de la page
 
 L'onglet « Groupes » peut être temporairement masqué dans l'interface tout en restant disponible dans le code pour une utilisation future.
 
+## Journal des transferts
+
+Après chaque transfert réussi, le plugin tente d'enregistrer un événement et une entrée dans **transferticketentity.log**, consultables dans **Administration > Journaux**, avec l'utilisateur, le ticket, les entités d'origine et de destination et la justification. Ils sont enregistrés quels que soient le niveau de journalisation et l'option de fichiers de log de GLPI. L'événement suit la politique de conservation des événements de GLPI ; le fichier suit la gestion des fichiers de log de GLPI. Les administrateurs ayant accès aux journaux peuvent voir des justifications de tickets auxquels ils n'ont pas accès.
+
+L'événement et le fichier sont enregistrés après confirmation du transfert, sans garantie transactionnelle. Les erreurs sont consignées dans le journal d'erreurs du serveur, sans avertissement à l'utilisateur ni annulation du transfert. Si le message dépasse la limite de stockage des événements, l'événement n'est pas enregistré, mais l'écriture du fichier est toujours tentée. Le fichier est créé dans le répertoire des logs GLPI lors de la première écriture réussie. L'enregistrement direct ne déclenche pas le webhook de nouvel événement de GLPI.
+
 ## Compatibilité
 
 Ce plugin a été développé et testé pour GLPI 11.
@@ -173,6 +185,12 @@ Use the filter above each list to find items without changing their selections. 
 Settings are persisted and restored when the configuration page is reopened. Deselected entities and profiles are automatically disabled when settings are saved. Loading tabs and saving display a progress indicator.
 
 The **Groups** tab may be temporarily hidden in the interface while remaining available in the source code for future use.
+
+## Transfer event log
+
+After each successful plugin transfer, the plugin attempts to record an event and an entry in **transferticketentity.log**, available under **Administration > Logs**, containing the user, ticket, source and destination entities, and the supplied justification. Both are recorded regardless of GLPI's log level or file logging setting. The event follows GLPI's event retention policy; the file follows GLPI's log file management. Administrators with log access can see justifications for tickets they cannot otherwise access.
+
+The event and file are written after the transfer commits, without transactional guarantees. Failures are recorded in the server error log without notifying the user or undoing the transfer. If the message exceeds the database event limit, the event is skipped but file logging is still attempted. The file is created in GLPI's log directory on the first successful write. Direct event insertion does not trigger GLPI's new-event webhook.
 
 ## Compatibility
 

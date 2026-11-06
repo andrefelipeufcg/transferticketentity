@@ -21,9 +21,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 3.4.2\n"
 
+#: src/Controller/TicketController.php
+msgid "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s"
+msgstr "%1$s (ID do usuário %2$d) transferiu o chamado %3$d de %4$s (ID da entidade %5$d) para %6$s (ID da entidade %7$d). Justificativa: %8$s"
+
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
-msgstr "Transferência de chamados entre entidades"
+msgstr "Transferência de chamado entre setores (entidades)"
 
 #: templates/settings_list_filter.html.twig
 msgid "Type what you are looking for. Bulk actions affect all items, including those hidden by the filter."
@@ -59,7 +63,7 @@ msgstr "Se o problema persistir, você pode tentar esvaziar o cache através das
 
 #: inc/ticket.class.php:216
 msgid "Select ticket entity to transfer"
-msgstr "Selecione a entidade para a qual transferir o chamado"
+msgstr "Selecione o setor (entidade) para transferir o chamado"
 
 #: inc/ticket.class.php:218
 msgid "Choose your entity"
