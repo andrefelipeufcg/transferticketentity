@@ -6,6 +6,7 @@ use CommonITILActor;
 use CommonITILObject;
 use Entity as GlpiEntity;
 use Glpi\Controller\AbstractController;
+use Glpi\Event;
 use Glpi\Http\RedirectResponse;
 use GlpiPlugin\Transferticketentity\Entity;
 use Group;
@@ -196,9 +197,29 @@ final class TicketController extends AbstractController
             $group->getFromDB($group_id);
         }
 
-        $justification = trim($request->request->getString('justification'));
+        $submittedJustification = $request->request->getString('justification');
+        $justification = trim($submittedJustification);
         if ($entityRights['justification_transfer'] && $justification === '') {
             return self::redirectWithError(__("Justification required", "transferticketentity"));
+        }
+
+        $sourceEntity = new GlpiEntity();
+        if (!$sourceEntity->getFromDB($ticket->getEntityID())) {
+            return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
+        }
+        $eventMessage = sprintf(
+            __('%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s', 'transferticketentity'),
+            $_SESSION['glpiname'] ?? '',
+            Session::getLoginUserID(),
+            $ticket->getId(),
+            $sourceEntity->getName(['complete' => true]),
+            $sourceEntity->getId(),
+            $entity->getName(['complete' => true]),
+            $entity->getId(),
+            $submittedJustification
+        );
+        if (strlen($eventMessage) > 65535) {
+            return self::redirectWithError(__('The transfer justification is too long to record in the event log.', 'transferticketentity'));
         }
 
         $ticketUpdate = [
@@ -265,7 +286,7 @@ final class TicketController extends AbstractController
                 self::$originalTransferFields = [];
             }
 
-            if (!$updated || !$ticket->getFromDB($ticket->getId())) {
+            if (!$updated || !$ticket->getFromDB($ticket->getId()) || (int) $ticket->getEntityID() !== $entity_id) {
                 return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
             }
             if ((int) $ticket->fields['itilcategories_id'] !== $ticketCategory) {
@@ -310,6 +331,17 @@ final class TicketController extends AbstractController
                 $slaLevelTicket = new SlaLevel_Ticket();
                 $slaLevelTicket->deleteForTicket($ticket->getId(), SLM::TTO);
                 $slaLevelTicket->deleteForTicket($ticket->getId(), SLM::TTR);
+            }
+            // Event::log() filters by GLPI's log level; transfer auditing must always be recorded.
+            if (!$DB->insert(Event::getTable(), [
+                'items_id' => $ticket->getId(),
+                'type' => GlpiTicket::class,
+                'date' => $_SESSION['glpi_currenttime'],
+                'service' => 'tracking',
+                'level' => 4,
+                'message' => $eventMessage,
+            ])) {
+                throw new \RuntimeException('Unable to record the ticket transfer event.');
             }
             $DB->commit();
             $committed = true;

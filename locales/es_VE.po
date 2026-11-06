@@ -21,6 +21,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.0.1\n"
 
+#: src/Controller/TicketController.php
+msgid "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s"
+msgstr "%1$s (ID de usuario %2$d) transfirió el ticket %3$d de %4$s (ID de entidad %5$d) a %6$s (ID de entidad %7$d). Justificación: %8$s"
+
+#: src/Controller/TicketController.php
+msgid "The transfer justification is too long to record in the event log."
+msgstr "La justificación de la transferencia es demasiado larga para registrarse en el registro de eventos."
+
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
 msgstr "Transferir Caso a Entidad"

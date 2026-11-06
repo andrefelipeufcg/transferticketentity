@@ -24,6 +24,14 @@ msgstr ""
 "1000000 == 0 ? 1 : 2;\n"
 "X-Generator: Poedit 3.3.2\n"
 
+#: src/Controller/TicketController.php
+msgid "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s"
+msgstr "%1$s (ID utilisateur %2$d) a transféré le ticket %3$d de %4$s (ID entité %5$d) vers %6$s (ID entité %7$d). Justification : %8$s"
+
+#: src/Controller/TicketController.php
+msgid "The transfer justification is too long to record in the event log."
+msgstr "La justification du transfert est trop longue pour être enregistrée dans le journal des événements."
+
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
 msgstr "Transfert d'entité"

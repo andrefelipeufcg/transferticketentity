@@ -50,6 +50,12 @@ Use o filtro acima de cada lista para localizar itens sem alterar suas seleçõe
 
 O carregamento das abas e o salvamento exibem um indicador de progresso.
 
+## Log de transferências
+
+Cada transferência concluída pelo plugin gera um evento em **Administração > Logs**, com o usuário, o chamado, as entidades de origem e destino e a justificativa informada. O evento é registrado independentemente do nível de log configurado no GLPI e segue a política de retenção dos logs de eventos do GLPI. O acesso aos logs pode revelar justificativas a administradores que não tenham acesso ao chamado.
+
+O evento e a transferência são gravados na mesma transação; se o registro falhar, a transferência é desfeita. Justificativas que ultrapassem o limite de armazenamento do evento são rejeitadas antes da transferência. O registro direto não dispara o webhook de novo evento do GLPI.
+
 ## Compatibilidade
 
 Este plugin foi desenvolvido e testado para uso com o GLPI 11.
@@ -112,6 +118,12 @@ Les paramètres sont conservés et rechargés lors de la réouverture de la page
 
 L'onglet « Groupes » peut être temporairement masqué dans l'interface tout en restant disponible dans le code pour une utilisation future.
 
+## Journal des transferts
+
+Chaque transfert effectué par le plugin crée un événement dans **Administration > Journaux**, avec l'utilisateur, le ticket, les entités d'origine et de destination et la justification. L'événement est enregistré quel que soit le niveau de journalisation et suit la politique de conservation des événements de GLPI. Les administrateurs ayant accès aux journaux peuvent voir des justifications de tickets auxquels ils n'ont pas accès.
+
+L'événement et le transfert sont enregistrés dans la même transaction ; si l'enregistrement échoue, le transfert est annulé. Une justification dépassant la capacité de stockage de l'événement est refusée avant le transfert. L'enregistrement direct ne déclenche pas le webhook de nouvel événement de GLPI.
+
 ## Compatibilité
 
 Ce plugin a été développé et testé pour GLPI 11.
@@ -173,6 +185,12 @@ Use the filter above each list to find items without changing their selections. 
 Settings are persisted and restored when the configuration page is reopened. Deselected entities and profiles are automatically disabled when settings are saved. Loading tabs and saving display a progress indicator.
 
 The **Groups** tab may be temporarily hidden in the interface while remaining available in the source code for future use.
+
+## Transfer event log
+
+Each successful plugin transfer creates an event under **Administration > Logs** containing the user, ticket, source and destination entities, and the supplied justification. The event is recorded regardless of GLPI's configured log level and follows GLPI's event retention policy. Administrators with log access can see justifications for tickets they cannot otherwise access.
+
+The event and transfer are saved in the same transaction; if event insertion fails, the transfer is rolled back. Justifications exceeding the event storage limit are rejected before the transfer. Direct event insertion does not trigger GLPI's new-event webhook.
 
 ## Compatibility
 
