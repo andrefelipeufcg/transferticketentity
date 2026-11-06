@@ -79,7 +79,7 @@ msgstr "Escolha seu grupo"
 
 #: inc/ticket.class.php:250
 msgid "Confirm transfer ?"
-msgstr "Conformar transferência?"
+msgstr "Confirmar transferência?"
 
 #: inc/ticket.class.php:251
 msgid "Once the transfer has been completed, the ticket will remain visible only if you have the required rights."
