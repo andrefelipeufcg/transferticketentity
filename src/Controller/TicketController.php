@@ -204,25 +204,7 @@ final class TicketController extends AbstractController
             return self::redirectWithError(__("Justification required", "transferticketentity"));
         }
 
-        $sourceEntity = new GlpiEntity();
-        if (!$sourceEntity->getFromDB($ticket->getEntityID())) {
-            return self::redirectWithError(__("Unable to transfer the ticket.", "transferticketentity"));
-        }
-        $eventMessage = sprintf(
-            __('%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s', 'transferticketentity'),
-            $_SESSION['glpiname'] ?? '',
-            Session::getLoginUserID(),
-            $ticket->getId(),
-            $sourceEntity->getName(['complete' => true]),
-            $sourceEntity->getId(),
-            $entity->getName(['complete' => true]),
-            $entity->getId(),
-            $submittedJustification
-        );
-        if (strlen($eventMessage) > 65535) {
-            return self::redirectWithError(__('The transfer justification is too long to record in the event log.', 'transferticketentity'));
-        }
-        $fileLogMessage = json_encode($eventMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+        $sourceEntityId = $ticket->getEntityID();
 
         $ticketUpdate = [
             'id' => $ticket->getId(),
@@ -334,17 +316,6 @@ final class TicketController extends AbstractController
                 $slaLevelTicket->deleteForTicket($ticket->getId(), SLM::TTO);
                 $slaLevelTicket->deleteForTicket($ticket->getId(), SLM::TTR);
             }
-            // Event::log() filters by GLPI's log level; transfer auditing must always be recorded.
-            if (!$DB->insert(Event::getTable(), [
-                'items_id' => $ticket->getId(),
-                'type' => GlpiTicket::class,
-                'date' => $_SESSION['glpi_currenttime'],
-                'service' => 'tracking',
-                'level' => 4,
-                'message' => $eventMessage,
-            ])) {
-                throw new \RuntimeException('Unable to record the ticket transfer event.');
-            }
             $DB->commit();
             $committed = true;
         } finally {
@@ -353,14 +324,7 @@ final class TicketController extends AbstractController
             }
         }
 
-        if (!Toolbox::logInFile('transferticketentity', $fileLogMessage . "\n", true, false)) {
-            error_log('[transferticketentity] Unable to write the transfer log file for ticket ' . $ticket->getId());
-            Session::addMessageAfterRedirect(
-                __('The ticket was transferred, but the transfer log file could not be written. Contact an administrator.', 'transferticketentity'),
-                true,
-                ERROR
-            );
-        }
+        self::logTransfer($ticket->getId(), $sourceEntityId, $entity, $submittedJustification);
 
         $justificationText = '';
         if ($justification !== '') {
@@ -397,6 +361,61 @@ final class TicketController extends AbstractController
                 $request->getBasePath()
             )
         );
+    }
+
+    private static function logTransfer(int $ticketId, int $sourceEntityId, GlpiEntity $destination, string $justification): void
+    {
+        global $DB;
+
+        try {
+            $source = new GlpiEntity();
+            if (!$source->getFromDB($sourceEntityId)) {
+                throw new \RuntimeException('Source entity not found.');
+            }
+            $message = sprintf(
+                __('%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s', 'transferticketentity'),
+                $_SESSION['glpiname'] ?? '',
+                Session::getLoginUserID(),
+                $ticketId,
+                $source->getName(['complete' => true]),
+                $sourceEntityId,
+                $destination->getName(['complete' => true]),
+                $destination->getId(),
+                $justification
+            );
+        } catch (\Throwable $e) {
+            error_log('[transferticketentity] Unable to prepare transfer log for ticket ' . $ticketId . ': ' . get_class($e));
+            return;
+        }
+
+        if (strlen($message) > 65535) {
+            error_log('[transferticketentity] Transfer event exceeds the database message limit for ticket ' . $ticketId);
+        } else {
+            try {
+                // Event::log() filters by GLPI's log level.
+                if (!$DB->insert(Event::getTable(), [
+                    'items_id' => $ticketId,
+                    'type' => GlpiTicket::class,
+                    'date' => $_SESSION['glpi_currenttime'],
+                    'service' => 'tracking',
+                    'level' => 4,
+                    'message' => $message,
+                ])) {
+                    throw new \RuntimeException('Unable to insert transfer event.');
+                }
+            } catch (\Throwable $e) {
+                error_log('[transferticketentity] Unable to record transfer event for ticket ' . $ticketId . ': ' . get_class($e));
+            }
+        }
+
+        try {
+            $fileMessage = json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            if (!Toolbox::logInFile('transferticketentity', $fileMessage . "\n", true, false)) {
+                throw new \RuntimeException('Unable to write transfer log file.');
+            }
+        } catch (\Throwable $e) {
+            error_log('[transferticketentity] Unable to write transfer log file for ticket ' . $ticketId . ': ' . get_class($e));
+        }
     }
 
     /**

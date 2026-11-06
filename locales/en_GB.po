@@ -25,14 +25,6 @@ msgstr ""
 msgid "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s"
 msgstr "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to %6$s (entity ID %7$d). Justification: %8$s"
 
-#: src/Controller/TicketController.php
-msgid "The ticket was transferred, but the transfer log file could not be written. Contact an administrator."
-msgstr "The ticket was transferred, but the transfer log file could not be written. Contact an administrator."
-
-#: src/Controller/TicketController.php
-msgid "The transfer justification is too long to record in the event log."
-msgstr "The transfer justification is too long to record in the event log."
-
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
 msgstr "Transfer Ticket Entity"
