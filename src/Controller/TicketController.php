@@ -409,7 +409,8 @@ final class TicketController extends AbstractController
         }
 
         try {
-            $fileMessage = json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            // Mantém os caracteres de controle escapados, sem as aspas externas da string JSON.
+            $fileMessage = substr(json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR), 1, -1);
             if (!Toolbox::logInFile('transferticketentity', $fileMessage . "\n", true, false)) {
                 throw new \RuntimeException('Unable to write transfer log file.');
             }
