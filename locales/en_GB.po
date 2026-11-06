@@ -27,7 +27,7 @@ msgstr "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) t
 
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
-msgstr "Transfer Ticket Entity"
+msgstr "Transfer ticket between departments (entities)"
 
 #: inc/profile.class.php:74
 msgid "Change rights"
@@ -55,7 +55,7 @@ msgstr "If the problem persists, you can try to empty the cache by doing CTRL + 
 
 #: inc/ticket.class.php:216
 msgid "Select ticket entity to transfer"
-msgstr "Select ticket entity to transfer"
+msgstr "Select the department (entity) to transfer the ticket"
 
 #: inc/ticket.class.php:218
 msgid "Choose your entity"

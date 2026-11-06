@@ -27,7 +27,7 @@ msgstr "%1$s (ID de usuario %2$d) transfirió el ticket %3$d de %4$s (ID de enti
 
 #: inc/profile.class.php:74 inc/ticket.class.php:48
 msgid "Transfer Ticket Entity"
-msgstr "Transferir Caso a Entidad"
+msgstr "Transferencia de caso entre sectores (entidades)"
 
 #: inc/profile.class.php:74
 msgid "Change rights"
@@ -58,7 +58,7 @@ msgstr ""
 
 #: inc/ticket.class.php:216
 msgid "Select ticket entity to transfer"
-msgstr "Seleccione la entidad del caso para transferir"
+msgstr "Seleccione el sector (entidad) para transferir el caso"
 
 #: inc/ticket.class.php:218
 msgid "Choose your entity"
