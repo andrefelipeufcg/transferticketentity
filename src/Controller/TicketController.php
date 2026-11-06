@@ -23,6 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Ticket as GlpiTicket;
 use Ticket_User;
 use TicketTask;
+use Toolbox;
 
 final class TicketController extends AbstractController
 {
@@ -221,6 +222,7 @@ final class TicketController extends AbstractController
         if (strlen($eventMessage) > 65535) {
             return self::redirectWithError(__('The transfer justification is too long to record in the event log.', 'transferticketentity'));
         }
+        $fileLogMessage = json_encode($eventMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
 
         $ticketUpdate = [
             'id' => $ticket->getId(),
@@ -349,6 +351,15 @@ final class TicketController extends AbstractController
             if (!$committed) {
                 $DB->rollBack();
             }
+        }
+
+        if (!Toolbox::logInFile('transferticketentity', $fileLogMessage . "\n", true, false)) {
+            error_log('[transferticketentity] Unable to write the transfer log file for ticket ' . $ticket->getId());
+            Session::addMessageAfterRedirect(
+                __('The ticket was transferred, but the transfer log file could not be written. Contact an administrator.', 'transferticketentity'),
+                true,
+                ERROR
+            );
         }
 
         $justificationText = '';

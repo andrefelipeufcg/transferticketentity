@@ -26,6 +26,10 @@ msgid "%1$s (user ID %2$d) transferred ticket %3$d from %4$s (entity ID %5$d) to
 msgstr ""
 
 #: src/Controller/TicketController.php
+msgid "The ticket was transferred, but the transfer log file could not be written. Contact an administrator."
+msgstr ""
+
+#: src/Controller/TicketController.php
 msgid "The transfer justification is too long to record in the event log."
 msgstr ""
 

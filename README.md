@@ -52,9 +52,9 @@ O carregamento das abas e o salvamento exibem um indicador de progresso.
 
 ## Log de transferências
 
-Cada transferência concluída pelo plugin gera um evento em **Administração > Logs**, com o usuário, o chamado, as entidades de origem e destino e a justificativa informada. O evento é registrado independentemente do nível de log configurado no GLPI e segue a política de retenção dos logs de eventos do GLPI. O acesso aos logs pode revelar justificativas a administradores que não tenham acesso ao chamado.
+Cada transferência concluída pelo plugin gera um evento e uma entrada no arquivo **transferticketentity.log**, consultáveis em **Administração > Logs**, com o usuário, o chamado, as entidades de origem e destino e a justificativa informada. Ambos são registrados independentemente do nível de log ou da opção de logs em arquivo do GLPI. O evento segue a política de retenção dos eventos do GLPI; o arquivo segue a gestão de arquivos de log do GLPI. O acesso aos logs pode revelar justificativas a administradores que não tenham acesso ao chamado.
 
-O evento e a transferência são gravados na mesma transação; se o registro falhar, a transferência é desfeita. Justificativas que ultrapassem o limite de armazenamento do evento são rejeitadas antes da transferência. O registro direto não dispara o webhook de novo evento do GLPI.
+O evento e a transferência são gravados na mesma transação; se o registro do evento falhar, a transferência é desfeita. O arquivo é escrito após a confirmação da transferência, sem garantia transacional; se a escrita falhar, o usuário é avisado e o evento permanece disponível. O arquivo é criado na primeira transferência registrada, no diretório de logs do GLPI. Justificativas que ultrapassem o limite de armazenamento do evento são rejeitadas antes da transferência. O registro direto do evento não dispara o webhook de novo evento do GLPI.
 
 ## Compatibilidade
 
@@ -120,9 +120,9 @@ L'onglet « Groupes » peut être temporairement masqué dans l'interface tout e
 
 ## Journal des transferts
 
-Chaque transfert effectué par le plugin crée un événement dans **Administration > Journaux**, avec l'utilisateur, le ticket, les entités d'origine et de destination et la justification. L'événement est enregistré quel que soit le niveau de journalisation et suit la politique de conservation des événements de GLPI. Les administrateurs ayant accès aux journaux peuvent voir des justifications de tickets auxquels ils n'ont pas accès.
+Chaque transfert effectué par le plugin crée un événement et une entrée dans **transferticketentity.log**, consultables dans **Administration > Journaux**, avec l'utilisateur, le ticket, les entités d'origine et de destination et la justification. Ils sont enregistrés quels que soient le niveau de journalisation et l'option de fichiers de log de GLPI. L'événement suit la politique de conservation des événements de GLPI ; le fichier suit la gestion des fichiers de log de GLPI. Les administrateurs ayant accès aux journaux peuvent voir des justifications de tickets auxquels ils n'ont pas accès.
 
-L'événement et le transfert sont enregistrés dans la même transaction ; si l'enregistrement échoue, le transfert est annulé. Une justification dépassant la capacité de stockage de l'événement est refusée avant le transfert. L'enregistrement direct ne déclenche pas le webhook de nouvel événement de GLPI.
+L'événement et le transfert sont enregistrés dans la même transaction ; si l'enregistrement de l'événement échoue, le transfert est annulé. Le fichier est écrit après confirmation du transfert, sans garantie transactionnelle ; en cas d'échec, l'utilisateur est averti et l'événement reste disponible. Le fichier est créé lors du premier transfert enregistré dans le répertoire des logs GLPI. Une justification dépassant la capacité de stockage de l'événement est refusée avant le transfert. L'enregistrement direct ne déclenche pas le webhook de nouvel événement de GLPI.
 
 ## Compatibilité
 
@@ -188,9 +188,9 @@ The **Groups** tab may be temporarily hidden in the interface while remaining av
 
 ## Transfer event log
 
-Each successful plugin transfer creates an event under **Administration > Logs** containing the user, ticket, source and destination entities, and the supplied justification. The event is recorded regardless of GLPI's configured log level and follows GLPI's event retention policy. Administrators with log access can see justifications for tickets they cannot otherwise access.
+Each successful plugin transfer creates an event and an entry in **transferticketentity.log**, available under **Administration > Logs**, containing the user, ticket, source and destination entities, and the supplied justification. Both are recorded regardless of GLPI's log level or file logging setting. The event follows GLPI's event retention policy; the file follows GLPI's log file management. Administrators with log access can see justifications for tickets they cannot otherwise access.
 
-The event and transfer are saved in the same transaction; if event insertion fails, the transfer is rolled back. Justifications exceeding the event storage limit are rejected before the transfer. Direct event insertion does not trigger GLPI's new-event webhook.
+The event and transfer are saved in the same transaction; if event insertion fails, the transfer is rolled back. The file is written after the transfer commits, without transactional guarantees; on write failure, the user is warned and the event remains available. The file is created in GLPI's log directory on the first recorded transfer. Justifications exceeding the event storage limit are rejected before the transfer. Direct event insertion does not trigger GLPI's new-event webhook.
 
 ## Compatibility
 
